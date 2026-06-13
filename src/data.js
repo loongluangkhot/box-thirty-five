@@ -229,12 +229,12 @@ export const LOCATIONS = [
 export const CARD_EVENTS = {
   hermit: {
     flag: "hermitArrived", card: "hermit", date: "June 5",
-    toast: { title: "June 5 · New card", msg: "<b>The Hermit</b> — IX — arrived in the morning post." },
+    toast: { title: "June 5 · New card", msg: "<b>The Hermit</b> — IX — arrived at the bank in the morning post." },
     line: "A lantern, and in it no star but a painted full moon.",
   },
   strength: {
     flag: "strengthArrived", card: "strength", date: "June 6",
-    toast: { title: "June 6 · New card", msg: "<b>Strength</b> — VIII — arrived, on schedule." },
+    toast: { title: "June 6 · New card", msg: "<b>Strength</b> — VIII — arrived at the bank, on schedule." },
     line: "It comes with no message at all. Only the numeral, one lower again.",
   },
 };
