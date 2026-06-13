@@ -7,7 +7,8 @@
     "dev": "vite",
     "dev:remote": "npm run dev -- --host 0.0.0.0 --port 3003",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "favicon": "node scripts/make-favicon.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "sharp": "^0.35.1",
     "vite": "^6.0.7"
   }
 }
