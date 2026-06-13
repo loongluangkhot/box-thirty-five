@@ -192,16 +192,6 @@ export function DialogueRow({ d, asked, locked, onClick }) {
   );
 }
 
-/* ---------------- Choice tile (deductions) ---------------- */
-export function ChoiceTile({ num, sub, selected, onClick }) {
-  return (
-    <button className={`choice${selected ? " choice--sel" : ""}`} onClick={onClick}>
-      <div className="choice__num">{num}</div>
-      {sub && <div className="choice__sub">{sub}</div>}
-    </button>
-  );
-}
-
 /* ---------------- Toast host ---------------- */
 export function ToastHost({ toasts, onDismiss }) {
   return (

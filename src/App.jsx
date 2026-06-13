@@ -146,7 +146,7 @@ export default function App() {
   const commitStakeout = (night, hour) => {
     const A = ANSWER;
     let outcome = null;
-    if (night !== A.night) outcome = { key: "wrongNight", chasedHerring: night === 11 };
+    if (night !== A.night) outcome = { key: "wrongNight" };
     else if (hour === A.trapHour) outcome = { key: "trapHour" };
     else if (hour !== A.hour) outcome = { key: "wrongHour" };
     if (!outcome) { setState((s) => ({ ...s, screen: "vault" })); return; }

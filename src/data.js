@@ -10,7 +10,7 @@
 export const CARD_ITEMS = {
   wheel: {
     id: "wheel", name: "The Wheel of Fortune", roman: "X", kind: "wheel",
-    img: "/wheel_of_fortune_altered.png", glow: true,
+    img: "/wheel_of_fortune_altered.png",
   },
   wheel_original: {
     id: "wheel_original", name: "The Wheel of Fortune", roman: "X", kind: "wheel_original",
@@ -36,20 +36,6 @@ export const CARD_ITEMS = {
     img: "/seven_of_swords.png",
   },
 };
-
-/* ---------- HOUR SLOTS (48 half-hours) ---------- */
-function buildHours() {
-  const out = [];
-  for (let h = 0; h < 24; h++) {
-    for (const m of [0, 30]) {
-      const ap = h < 12 ? "AM" : "PM";
-      let hh = h % 12; if (hh === 0) hh = 12;
-      out.push(`${hh}:${m === 0 ? "00" : "30"} ${ap}`);
-    }
-  }
-  return out;
-}
-export const HOURS = buildHours();
 
 export const ANSWER = { night: 14, hour: "4:30 AM", trapHour: "10:00 PM" };
 
@@ -89,33 +75,33 @@ export const LOCATIONS = [
     blurb: "A bell, a beaded curtain, and the smell of tallow. Vesna does not look up when you enter. “You’ve brought me something that isn’t mine,” she says, “and something that is.”",
     dialogue: [
       {
-        id: "showCard", q: "Show her a painted card", req: "Needs a card",
+        id: "showCard", q: "Show her a painted card",
         requires: "openedEnvelope",
         a: `She turns the Wheel over in her hands and her mouth tightens. <span class="speak">“These are mine. My deck, my hand — except they are not my hand at all. Someone has copied them, stroke for stroke.”</span> She sets it down. <span class="speak">“Hold a copy against the original and a trained eye finds where the copyist strayed. Borrow my deck. Look for yourself — I will not do your seeing for you.”</span>`,
       },
       {
-        id: "borrowDeck", q: "Borrow her original deck", req: "Ask to compare first",
+        id: "borrowDeck", q: "Borrow her original deck",
         requires: "askedShowCard",
         a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. Where they differ, the copyist meant something.”</span> Vesna's true cards now sit on the table beside yours.`,
         effects: { set: ["borrowedDeck"], addCards: ["wheel_original", "hermit_original"] },
       },
       {
-        id: "askFelix", q: "Ask about Felix Marsh", req: "Needs his name",
+        id: "askFelix", q: "Ask about Felix Marsh",
         requires: "felixNamed",
         a: `<span class="speak">“Felix. Yes — years a client, and a reader himself, better than most.”</span> She almost smiles. <span class="speak">“But he never sat under his own name. In the circle he read as a card. <strong>The Fool</strong> — the wanderer who carries nothing, fears nothing. He liked that it is numbered <strong>zero</strong>. ‘The only honest number,’ he’d say, ‘the one you count toward when everything else is spent.’”</span>`,
       },
       {
-        id: "askReading", q: "Ask about his peculiar reading", req: "Ask about Felix first",
+        id: "askReading", q: "Ask about his peculiar reading",
         requires: "askedAskFelix",
         a: `<span class="speak">“Ah. That.”</span> She cuts an imaginary deck and turns the halves over. <span class="speak">“Felix cut the deck upside down. Every card he read <strong>reversed</strong> — always. ‘Fortune only tells me the truth standing on its head,’ he used to say. It drove the others mad. He never once read a card the right way up.”</span>`,
       },
       {
-        id: "askOrder", q: "Ask about the order of the cards", req: "Wait for more to arrive",
+        id: "askOrder", q: "Ask about the order of the cards",
         requires: "strengthArrived",
         a: `She lays the three painted cards in the order they came. <span class="speak">“Ten. Then nine. Then eight.”</span> Her finger taps each numeral. <span class="speak">“These were not dealt, detective. They were <strong>counted</strong>. One each morning, each a step lower than the last. A deck does not do that on its own. A man does — a man marking off the days to something.”</span>`,
       },
       {
-        id: "askHermit", q: "Ask about the altered lantern", req: "Needs the Hermit & her deck",
+        id: "askHermit", q: "Ask about the altered lantern",
         requires: ["hermitArrived", "borrowedDeck"],
         a: `She holds the forged Hermit beside her own. <span class="speak">“My hermit carries a star in his lamp — the light of one distant truth. The copyist gave his lamp a <strong>full moon</strong> instead.”</span> She taps the painted disc. <span class="speak">“A man does not change a thing like that by accident. He wanted the moon in the picture. Why, I leave to you.”</span>`,
       },
@@ -123,7 +109,6 @@ export const LOCATIONS = [
     hotspots: [
       {
         id: "almanac", verb: "Study", label: "the lunar almanac on the shelf",
-        isImage: "almanac",
         image: "/lunar_almanac.png",
         reveal: `An unmarked almanac, open to <strong>June</strong>. The month's phases are printed plainly: last quarter on the <strong>6th</strong>, <strong>full moon on the 14th</strong>, lunar perigee on the 17th. Nothing is circled. Nothing is noted. It simply tells the truth about the sky.`,
         effects: { set: ["almanacSeen"] },
@@ -137,12 +122,11 @@ export const LOCATIONS = [
   {
     id: "yard", name: "Scotland Yard", sub: "Records & Case Files · Embankment",
     x: 48, y: 54,
-    onEnter: "yardVisited",
     blurb: "Green-shaded lamps and the rustle of paper. Down here the dead cases sleep in boxes. Yours is wide awake, and getting louder by the morning.",
     hotspots: [
       {
         id: "caseFile", verb: "Read", label: "Felix Marsh's case file",
-        requires: "felixNamed", reqLabel: "Needs a name from the bank",
+        requires: "felixNamed",
         reveal: `A thin file, mostly ruin. Felix Marsh, locksmith, lost his savings when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire <strong>Nicholas Neo</strong>, repaid every investor from his own pocket. Felix <strong>refused the money</strong> — too proud to take charity from a rich man — and chose a grudge instead. Six years of silence. Then a painted card in a bank's morning post.`,
         effects: { set: ["caseFileSeen"] },
       },
@@ -169,7 +153,6 @@ export const LOCATIONS = [
       },
       {
         id: "calendar", verb: "Photograph", label: "the wall calendar",
-        isImage: "calendar",
         image: "/workshop_calendar.png",
         reveal: `A cheap wall calendar, June showing. One date is ringed in pencil, gone over and over until the lead tore the paper and dented the plaster behind: <strong>the 11th</strong>. No note beside it. No reason given. Just the ring, pressed hard enough to mean something — or to look as though it does.`,
         effects: { set: ["calendarSeen"] },
@@ -193,7 +176,7 @@ export const LOCATIONS = [
       },
       {
         id: "dresser", verb: "Ask", label: "the tenor's dresser",
-        requires: "operaDoorkeeper", reqLabel: "Ask the doorkeeper first",
+        requires: "operaDoorkeeper",
         reveal: `The dresser lowers her voice. <span class="speak">“It's his mother's brooch. She sang here, before him. He wears it pinned inside his waistcoat, against the heart, where not a soul in the house will ever see it. He'd sooner lose his voice than go on without it.”</span> A parcel from a vault, three times in a week. A son who misses his mother. Nothing here is missing, and nothing is strange.`,
         effects: { set: ["operaDresser"] },
       },
@@ -216,7 +199,7 @@ export const LOCATIONS = [
       },
       {
         id: "cellar", verb: "Examine", label: "the unfinished cellar door",
-        requires: "pubLandlady", reqLabel: "Ask the landlady first",
+        requires: "pubLandlady",
         reveal: `Half a lock set into the old door and stopped there — like a sentence broken off mid-word. The work is immaculate as far as it goes. His tools are still in their canvas roll on the floor, laid out in order, waiting for a hand that stopped coming in spring. Honest work, abandoned. It says everything about the man and points nowhere.`,
         effects: { set: ["pubCellar"] },
       },
@@ -229,12 +212,10 @@ export const LOCATIONS = [
 export const CARD_EVENTS = {
   hermit: {
     flag: "hermitArrived", card: "hermit", date: "June 5",
-    toast: { title: "June 5 · New card", msg: "<b>The Hermit</b> — IX — arrived at the bank in the morning post." },
     line: "A lantern, and in it no star but a painted full moon.",
   },
   strength: {
     flag: "strengthArrived", card: "strength", date: "June 6",
-    toast: { title: "June 6 · New card", msg: "<b>Strength</b> — VIII — arrived at the bank, on schedule." },
     line: "It comes with no message at all. Only the numeral, one lower again.",
   },
 };
@@ -251,28 +232,26 @@ export const CARD_CAPTIONS = {
 };
 
 /* ---------- FAILURE + SUCCESS SCENES ---------- */
+const NO_ONE_CAME_BODY = `<p>You set the watch and waited it out in the dark of the vault corridor. The hours passed. The grate never moved. By the time the morning shift arrived, the vault stood exactly as you had left it.</p>
+  <p>The ambush was futile. No one came.</p>`;
+
 export const OUTCOMES = {
   wrongNight: {
     kicker: "Stakeout · futile",
     title: "No one came",
-    body: () => `<p>You set the watch and waited it out in the dark of the vault corridor. The hours passed. The grate never moved. By the time the morning shift arrived, the vault stood exactly as you had left it.</p>
-      <p>The ambush was futile. No one came.</p>`,
+    body: NO_ONE_CAME_BODY,
     q: "Then the night was wrong. Go back to the facts and read them again — without assuming what they seem to say.",
   },
   trapHour: {
     kicker: "Stakeout · futile",
     title: "No one came",
-    body: () => `<p>You set the watch and waited it out in the dark of the vault corridor. The hours passed. The grate never moved. By the time the morning shift arrived, the vault stood exactly as you had left it.</p>
-      <p>The ambush was futile. No one came.</p>`,
+    body: NO_ONE_CAME_BODY,
     q: "The hour was wrong. Go back to the facts and read them again — without assuming what they seem to say.",
   },
   wrongHour: {
     kicker: "Stakeout · futile",
     title: "No one came",
-    body: () => `<p>You set the watch and waited it out in the dark of the vault corridor. The hours passed. The grate never moved. By the time the morning shift arrived, the vault stood exactly as you had left it.</p>
-      <p>The ambush was futile. No one came.</p>`,
+    body: NO_ONE_CAME_BODY,
     q: "The hour was wrong. Go back to the facts and read them again — without assuming what they seem to say.",
   },
 };
-
-export const DATES = Array.from({ length: 30 }, (_, i) => i + 1);

@@ -367,7 +367,7 @@ export function OutcomeScreen({ ctx }) {
             </span>
             <h1>{conf.title}</h1>
           </div>
-          <RichText html={conf.body(o.chasedHerring)} />
+          <RichText html={conf.body} />
           <div className="q-nudge">
             <Kicker>The case is not lost</Kicker>
             <p>{conf.q}</p>

@@ -181,7 +181,7 @@ export function TCard({ item, glow, onClick, flipped }) {
 
 /* --- Enlarge + turn modal --- */
 const LENS_SIZE = 180;       // px — diameter of the floating magnifier lens
-const LENS_ZOOM = 2.3;       // matches the previous .zoom scale (also = 230% for backgroundSize / 100 below 440%)
+const LENS_ZOOM = 2.3;       // 2.3x for placeholder SVG; PNGs use 230% backgroundSize
 const LONG_PRESS_MS = 220;   // touch hold before the lens appears
 
 export function CardModal({ item, caption, onClose }) {

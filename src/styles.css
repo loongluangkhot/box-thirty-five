@@ -80,7 +80,6 @@ p { margin:0 0 1em; }
 .btn--solid:hover { background:#e8542f; }
 .btn--ghost { border-color:var(--p-border); color:var(--text); background:transparent; }
 .btn--ghost:hover { border-color:var(--text); background:rgba(236,232,223,0.04); }
-.btn--mark { border-color:var(--mark); color:var(--mark); background:var(--mark-soft); }
 .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
 
 /* ---- Panel ---- */
@@ -149,8 +148,6 @@ p { margin:0 0 1em; }
 .beacon__badge { position:absolute; top:-8px; right:-8px; width:17px; height:17px; border-radius:50%;
   background:var(--accent); color:#0b0b0b; font-size:10px; font-weight:700; line-height:1;
   display:flex; align-items:center; justify-content:center; border:1.5px solid var(--bg-bot); }
-.beacon__inner { width:18px; height:18px; border:1.5px solid var(--accent); position:relative; }
-.beacon__inner::after { content:""; position:absolute; inset:4px; border:1px solid rgba(216,64,31,0.5); }
 .beacon--idle { animation:beacon 2.2s ease-in-out infinite; }
 .beacon--done { border-color:var(--accent-dim); background:transparent; }
 .beacon--done .beacon__icon { color:var(--accent); }
@@ -222,9 +219,6 @@ p { margin:0 0 1em; }
 .modal__side { flex:1; min-width:0; }
 .modal__side h2 { margin-bottom:6px; }
 .modal__hint { font-size:16px; margin-top:16px; }
-.zoom { width:240px; height:240px; border:1px solid var(--p-border); border-radius:var(--radius); margin-top:18px;
-  background-repeat:no-repeat; background-color:#161310; position:relative; }
-.zoom__lab { position:absolute; bottom:8px; left:8px; }
 
 /* ---- Dialogue (Vesna) — mirrors .action so they read as one family ---- */
 .dlg-list { display:flex; flex-direction:column; gap:12px; }
@@ -244,7 +238,6 @@ p { margin:0 0 1em; }
 .dlg__verb { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
 .dlg--asked .dlg__verb { color:var(--text-dim); }
 .dlg__q { color:var(--heading); font-size:16.5px; font-family:var(--font-body); margin-top:3px; display:block; }
-.dlg__req { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); margin-top:4px; }
 .dlg__a { margin-top:11px; padding-top:12px; border-top:1px solid var(--hair); }
 
 /* ---- Hotspot action chips (location screens) ---- */
@@ -268,24 +261,6 @@ p { margin:0 0 1em; }
   margin:14px 0 0; border:1px solid var(--p-border); border-radius:var(--radius);
   background:#0b0b0b; box-shadow:0 8px 22px rgba(0,0,0,0.45);
 }
-
-/* ---- Choice tiles (deductions) ---- */
-.choice-grid { display:flex; flex-wrap:wrap; gap:12px; }
-.choice {
-  min-width:104px; padding:16px 18px; border:1px solid var(--p-border); border-radius:var(--radius);
-  background:rgba(236,232,223,0.015); cursor:pointer; transition:all .18s ease; text-align:center;
-}
-.choice:hover { border-color:var(--accent); transform:translateY(-2px); }
-.choice--sel { border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 18px var(--accent-soft); }
-.choice__num { font-family:var(--font-display); font-weight:800; color:var(--heading); font-size:22px; }
-.choice__sub { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); margin-top:4px; }
-
-select.field {
-  font-family:var(--font-mono); font-size:14px; letter-spacing:1px; color:var(--heading);
-  background:#161310; background:linear-gradient(160deg,#1c1c1c,#151515); border:1px solid var(--p-border);
-  border-radius:var(--radius); padding:13px 16px; cursor:pointer; min-width:200px; text-transform:uppercase;
-}
-select.field:focus { outline:none; border-color:var(--accent); }
 
 /* ---- Stakeout pickers ---- */
 .pick-readout { margin-top:18px; text-align:center; font-family:var(--font-mono); font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text); }
