@@ -229,7 +229,7 @@ export function EventBanner({ ev, item, onLog }) {
         <div className="ebanner__name">{item.name} · {item.roman}</div>
         <div className="ebanner__line">{ev.line}</div>
       </div>
-      <button className="btn ebanner__close" onClick={onLog}>Log it</button>
+      <button className="btn ebanner__close" onClick={onLog}>Keep it</button>
     </div>
   );
 }
