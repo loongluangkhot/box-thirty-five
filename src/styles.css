@@ -226,8 +226,8 @@ p { margin:0 0 1em; }
   background-repeat:no-repeat; background-color:#161310; position:relative; }
 .zoom__lab { position:absolute; bottom:8px; left:8px; }
 
-/* ---- Dialogue (Vesna) ---- */
-.dlg-list { display:flex; flex-direction:column; gap:10px; }
+/* ---- Dialogue (Vesna) — mirrors .action so they read as one family ---- */
+.dlg-list { display:flex; flex-direction:column; gap:12px; }
 .dlg {
   display:flex; gap:14px; align-items:flex-start; padding:16px 18px;
   border:1px solid var(--p-border); border-radius:var(--radius); background:rgba(236,232,223,0.015);
@@ -237,13 +237,15 @@ p { margin:0 0 1em; }
 .dlg--locked { opacity:.5; cursor:not-allowed; }
 .dlg--locked:hover { border-color:var(--p-border); background:rgba(236,232,223,0.015); transform:none; }
 .dlg--asked { border-color:var(--accent-dim); }
-.dlg__disc { width:24px; height:24px; flex:none; border-radius:50%; border:1.5px solid var(--accent);
-  display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--accent); margin-top:2px; }
-.dlg--locked .dlg__disc { border-color:var(--text-dim); color:var(--text-dim); }
+.dlg__disc { width:24px; height:24px; flex:none; border-radius:var(--radius); border:1.5px solid var(--accent);
+  display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--accent); margin-top:2px; background:rgba(216,64,31,0.05); }
+.dlg--locked .dlg__disc { border-color:var(--text-dim); color:var(--text-dim); background:transparent; }
 .dlg--asked .dlg__disc { background:var(--accent); color:#0b0b0b; border-color:var(--accent); }
-.dlg__q { color:var(--heading); font-size:16.5px; font-family:var(--font-body); }
+.dlg__verb { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
+.dlg--asked .dlg__verb { color:var(--text-dim); }
+.dlg__q { color:var(--heading); font-size:16.5px; font-family:var(--font-body); margin-top:3px; display:block; }
 .dlg__req { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); margin-top:4px; }
-.dlg__a { margin-top:10px; padding-top:12px; border-top:1px solid var(--hair); }
+.dlg__a { margin-top:11px; padding-top:12px; border-top:1px solid var(--hair); }
 
 /* ---- Hotspot action chips (location screens) ---- */
 .action-list { display:flex; flex-direction:column; gap:12px; }
@@ -261,6 +263,11 @@ p { margin:0 0 1em; }
   display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--accent); margin-top:2px; background:rgba(216,64,31,0.05); }
 .action--done .action__disc { background:var(--accent); color:#0b0b0b; border-color:var(--accent); }
 .action__reveal { margin-top:11px; padding-top:12px; border-top:1px solid var(--hair); }
+.action__image {
+  display:block; width:100%; max-width:520px; height:auto;
+  margin:14px 0 0; border:1px solid var(--p-border); border-radius:var(--radius);
+  background:#0b0b0b; box-shadow:0 8px 22px rgba(0,0,0,0.45);
+}
 
 /* ---- Choice tiles (deductions) ---- */
 .choice-grid { display:flex; flex-wrap:wrap; gap:12px; }

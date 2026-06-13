@@ -162,6 +162,9 @@ export function ActionRow({ hs, done, locked, onClick }) {
           <span className="action__verb">{done ? "Done" : hs.verb}</span>
           <div className="action__label">{hs.verb} {hs.label}</div>
           {done && hs.reveal && <div className="action__reveal"><RichText html={hs.reveal} /></div>}
+          {done && hs.image && (
+            <img className="action__image" src={hs.image} alt={hs.label} />
+          )}
         </span>
       )}
     </button>
@@ -172,7 +175,7 @@ export function ActionRow({ hs, done, locked, onClick }) {
 export function DialogueRow({ d, asked, locked, onClick }) {
   return (
     <button className={`dlg${asked ? " dlg--asked" : ""}${locked ? " dlg--locked" : ""}`} onClick={locked ? undefined : onClick} disabled={locked}>
-      <span className="dlg__disc">{asked ? "✓" : locked ? "◆" : "?"}</span>
+      <span className="dlg__disc">{asked ? "✓" : locked ? "◆" : "›"}</span>
       {locked ? (
         <span style={{ flex: 1 }} className="locked-hint">
           <span className="redact redact--row"></span>
@@ -180,6 +183,7 @@ export function DialogueRow({ d, asked, locked, onClick }) {
         </span>
       ) : (
         <span style={{ flex: 1 }}>
+          <span className="dlg__verb">{asked ? "Asked" : "Ask"}</span>
           <span className="dlg__q">{d.q}</span>
           {asked && <div className="dlg__a"><RichText html={d.a} /></div>}
         </span>

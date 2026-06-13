@@ -124,6 +124,7 @@ export const LOCATIONS = [
       {
         id: "almanac", verb: "Study", label: "the lunar almanac on the shelf",
         isImage: "almanac",
+        image: "/lunar_almanac.png",
         reveal: `An unmarked almanac, open to <strong>June</strong>. The month's phases are printed plainly: last quarter on the <strong>6th</strong>, <strong>full moon on the 14th</strong>, lunar perigee on the 17th. Nothing is circled. Nothing is noted. It simply tells the truth about the sky.`,
         effects: { set: ["almanacSeen"] },
       },
@@ -169,6 +170,7 @@ export const LOCATIONS = [
       {
         id: "calendar", verb: "Photograph", label: "the wall calendar",
         isImage: "calendar",
+        image: "/workshop_calendar.png",
         reveal: `A cheap wall calendar, June showing. One date is ringed in pencil, gone over and over until the lead tore the paper and dented the plaster behind: <strong>the 11th</strong>. No note beside it. No reason given. Just the ring, pressed hard enough to mean something — or to look as though it does.`,
         effects: { set: ["calendarSeen"] },
       },
