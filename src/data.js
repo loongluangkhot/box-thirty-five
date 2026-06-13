@@ -10,27 +10,30 @@
 export const CARD_ITEMS = {
   wheel: {
     id: "wheel", name: "The Wheel of Fortune", roman: "X", kind: "wheel",
-    img: "", glow: true,
+    img: "/wheel_of_fortune_altered.png", glow: true,
   },
   wheel_original: {
     id: "wheel_original", name: "The Wheel of Fortune", roman: "X", kind: "wheel_original",
-    img: "", reference: true,
+    img: "/wheel_of_fortune_original.png", reference: true,
   },
   hermit: {
-    id: "hermit", name: "The Hermit", roman: "IX", kind: "hermit", img: "",
+    id: "hermit", name: "The Hermit", roman: "IX", kind: "hermit",
+    img: "/hermit_altered.png",
   },
   hermit_original: {
     id: "hermit_original", name: "The Hermit", roman: "IX", kind: "hermit_original",
-    img: "", reference: true,
+    img: "/hermit_original.png", reference: true,
   },
   strength: {
-    id: "strength", name: "Strength", roman: "VIII", kind: "strength", img: "",
+    id: "strength", name: "Strength", roman: "VIII", kind: "strength",
+    img: "/strength.png",
   },
   fool: {
     id: "fool", name: "The Fool", roman: "0", kind: "fool", img: "",
   },
   seven: {
-    id: "seven", name: "Seven of Swords", roman: "VII", kind: "seven", img: "",
+    id: "seven", name: "Seven of Swords", roman: "VII", kind: "seven",
+    img: "/seven_of_swords.png",
   },
 };
 
@@ -93,8 +96,8 @@ export const LOCATIONS = [
       {
         id: "borrowDeck", q: "Borrow her original deck", req: "Ask to compare first",
         requires: "askedShowCard",
-        a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. Where they differ, the copyist meant something.”</span> Vesna's true cards are now available alongside yours under <em>The Cards</em>.`,
-        effects: { set: ["borrowedDeck"] },
+        a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. Where they differ, the copyist meant something.”</span> Vesna's true cards now sit on the table beside yours.`,
+        effects: { set: ["borrowedDeck"], addCards: ["wheel_original", "hermit_original"] },
       },
       {
         id: "askFelix", q: "Ask about Felix Marsh", req: "Needs his name",
@@ -241,6 +244,8 @@ export const CARD_CAPTIONS = {
   strength: { date: "June 6", where: "Received at the bank" },
   fool: { date: "—", where: "Found in Felix's workshop" },
   seven: { date: "—", where: "Found at the Royal Opera House" },
+  wheel_original: { date: "—", where: "Vesna's original" },
+  hermit_original: { date: "—", where: "Vesna's original" },
 };
 
 /* ---------- FAILURE + SUCCESS SCENES ---------- */

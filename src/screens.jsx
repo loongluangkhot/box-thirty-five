@@ -3,6 +3,13 @@
    Each takes `ctx` (state + helpers) from App.
    ============================================================ */
 import { useState } from "react";
+import {
+  DndContext, MouseSensor, TouchSensor, useSensor, useSensors, closestCenter,
+} from "@dnd-kit/core";
+import {
+  SortableContext, useSortable, arrayMove, rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { CARD_ITEMS, CARD_EVENTS, CARD_CAPTIONS, LOCATIONS, OUTCOMES } from "./data.js";
 import { TCard } from "./cards.jsx";
 import {
@@ -160,9 +167,49 @@ export function LocationScreen({ ctx }) {
 }
 
 /* ---------------- THE CARDS ---------------- */
+function SortableCardCell({ id, item, cap, glow, onOpen }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      className="card-cell"
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.4 : 1,
+        cursor: isDragging ? "grabbing" : "grab",
+        touchAction: "none",
+      }}
+      {...attributes}
+      {...listeners}
+    >
+      <TCard item={item} glow={glow} onClick={onOpen} />
+      <div className="cap">
+        <div className="name">{item.name} · {item.roman}</div>
+        <div className="meta">{cap.where}{cap.date && cap.date !== "—" ? " · " + cap.date : ""}</div>
+      </div>
+    </div>
+  );
+}
+
 export function CardsScreen({ ctx }) {
   const cards = ctx.cards;
-  const refs = ctx.has("borrowedDeck") ? ["wheel_original", "hermit_original"] : [];
+  // Mouse: 8px movement to start drag (so single clicks open the modal).
+  // Touch: long-press 200ms with 5px tolerance (so taps open the modal,
+  // a hold initiates the drag — and HTML5 DnD's touch-blindness is bypassed).
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return;
+    const oldIdx = cards.indexOf(active.id);
+    const newIdx = cards.indexOf(over.id);
+    if (oldIdx < 0 || newIdx < 0) return;
+    ctx.reorderCards(arrayMove(cards, oldIdx, newIdx));
+  };
+
   return (
     <div className="wrap screen">
       <div className="row" style={{ marginTop: 26, marginBottom: 6 }}>
@@ -170,45 +217,27 @@ export function CardsScreen({ ctx }) {
       </div>
       <Kicker>The detective's table</Kicker>
       <h1 style={{ margin: "10px 0 8px" }}>The Cards</h1>
-      <p className="prose" style={{ marginBottom: 26 }}>Everything you carry, laid out in the order it came to you. No notes, no marks — only the pictures, and what a careful eye makes of them.</p>
-      <div className="cards-row">
-        {cards.map((id) => {
-          const item = CARD_ITEMS[id];
-          const cap = CARD_CAPTIONS[id];
-          return (
-            <div className="card-cell" key={id}>
-              <TCard item={item} glow={id === "wheel"} onClick={() => ctx.openCard(item, cap)} />
-              <div className="cap">
-                <div className="name">{item.name} · {item.roman}</div>
-                <div className="meta">{cap.where}{cap.date !== "—" ? " · " + cap.date : ""}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {refs.length > 0 && (
-        <>
-          <div className="section-head" style={{ marginTop: 46 }}>
-            <h2>Vesna's deck</h2><span className="rule"></span>
-            <Kicker dim>For comparison — the honest originals</Kicker>
-          </div>
+      <p className="prose" style={{ marginBottom: 26 }}>Everything you carry, laid out as you please. Drag a card to rearrange it on the table — on a phone, press and hold first.</p>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={cards} strategy={rectSortingStrategy}>
           <div className="cards-row">
-            {refs.map((id) => {
+            {cards.map((id) => {
               const item = CARD_ITEMS[id];
+              const cap = CARD_CAPTIONS[id] || { date: "—", where: "" };
               return (
-                <div className="card-cell" key={id}>
-                  <TCard item={item} onClick={() => ctx.openCard(item, null)} />
-                  <div className="cap">
-                    <div className="name">{item.name} · {item.roman}</div>
-                    <div className="meta">Vesna's original</div>
-                  </div>
-                </div>
+                <SortableCardCell
+                  key={id}
+                  id={id}
+                  item={item}
+                  cap={cap}
+                  glow={id === "wheel"}
+                  onOpen={() => ctx.openCard(item, cap)}
+                />
               );
             })}
           </div>
-        </>
-      )}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

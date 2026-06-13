@@ -47,6 +47,14 @@ export default function App() {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {}
   }, [state]);
 
+  // Migration: older saves set the borrowedDeck flag without adding Vesna's
+  // originals to the deck. Ensure they're present so they render in The Cards.
+  useEffect(() => {
+    if (!state.flags.borrowedDeck) return;
+    const need = ["wheel_original", "hermit_original"].filter((c) => !state.cards.includes(c));
+    if (need.length) setState((s) => ({ ...s, cards: [...s.cards, ...need] }));
+  }, []); // run once on mount
+
   const addToast = useCallback((title, msg) => {
     const id = ++toastId.current;
     setToasts((ts) => [...ts, { id, title, msg }]);
@@ -68,6 +76,9 @@ export default function App() {
     if (addCard && !draft.cards.includes(addCard)) draft.cards = [...draft.cards, addCard];
     if (effects) {
       if (effects.set) { draft.flags = { ...draft.flags }; effects.set.forEach((f) => (draft.flags[f] = true)); }
+      if (effects.addCards) {
+        effects.addCards.forEach((c) => { if (!draft.cards.includes(c)) draft.cards = [...draft.cards, c]; });
+      }
       if (effects.unlock) { draft.unlocked = { ...draft.unlocked }; effects.unlock.forEach((u) => (draft.unlocked[u] = true)); }
       if (effects.unlockToast) fire.push(effects.unlockToast);
     }
@@ -143,6 +154,7 @@ export default function App() {
   };
 
   const clearBanner = () => setState((s) => ({ ...s, pendingBanner: null }));
+  const reorderCards = (next) => setState((s) => ({ ...s, cards: next }));
   const restart = () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} setState(initialState()); setToasts([]); setModalCard(null); };
 
   const locStatus = (loc) => {
@@ -158,7 +170,7 @@ export default function App() {
     unlockedCount: Object.values(state.unlocked).filter(Boolean).length,
     go, travel, has, met,
     hotspotDone: (locId, hsId) => !!state.done[locId]?.[hsId],
-    doHotspot, ask, commitStakeout, clearBanner, restart, locStatus,
+    doHotspot, ask, commitStakeout, clearBanner, reorderCards, restart, locStatus,
     openCard: (item, caption) => setModalCard({ item, caption }),
   };
 

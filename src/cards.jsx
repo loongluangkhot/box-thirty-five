@@ -1,7 +1,7 @@
 /* ============================================================
    cards.jsx — TCard, drawn placeholder art, enlarge/turn modal
    ============================================================ */
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 /* Gilt line color for placeholder art */
 const GILT = "#c9a24b";
@@ -180,21 +180,68 @@ export function TCard({ item, glow, onClick, flipped }) {
 }
 
 /* --- Enlarge + turn modal --- */
-const FOCUS = {
-  wheel: [0.6, 0.7], wheel_original: [0.6, 0.7],
-  hermit: [0.33, 0.36], hermit_original: [0.33, 0.36],
-  fool: [0.5, 0.5], strength: [0.5, 0.45], seven: [0.5, 0.45],
-};
+const LENS_SIZE = 180;       // px — diameter of the floating magnifier lens
+const LENS_ZOOM = 2.3;       // matches the previous .zoom scale (also = 230% for backgroundSize / 100 below 440%)
+const LONG_PRESS_MS = 220;   // touch hold before the lens appears
 
 export function CardModal({ item, caption, onClose }) {
   const [flipped, setFlipped] = useState(false);
-  const [fx, fy] = FOCUS[item.kind] || [0.5, 0.45];
-  const S = 2.3, Wc = 240, Hc = 240 * 1.751;
+  // lens: null = hidden; otherwise { x, y, fx, fy } where (x,y) is the cursor
+  // in viewport coords, (fx,fy) is the focal point in image-space [0..1]
+  const [lens, setLens] = useState(null);
+  const cardRef = useRef(null);
+  const longPressTimer = useRef(null);
+  const Wc = 240, Hc = 240 * 1.751;
+
+  // Map a viewport point to image-space coords (un-rotating when flipped).
+  // Returns null if the point is outside the card bounds.
+  const focusFor = (clientX, clientY) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    let x = (clientX - rect.left) / rect.width;
+    let y = (clientY - rect.top) / rect.height;
+    if (x < 0 || x > 1 || y < 0 || y > 1) return null;
+    if (flipped) { x = 1 - x; y = 1 - y; }
+    return [x, y];
+  };
+
+  const showLensAt = (clientX, clientY) => {
+    const f = focusFor(clientX, clientY);
+    if (!f) { setLens(null); return; }
+    setLens({ x: clientX, y: clientY, fx: f[0], fy: f[1] });
+  };
+  const hideLens = () => setLens(null);
+  const clearLongPress = () => {
+    if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null; }
+  };
 
   return (
     <div className="modal-scrim" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className={`modal__cardwrap${flipped ? " flipped" : ""}`}>
+        <div
+          ref={cardRef}
+          className={`modal__cardwrap${flipped ? " flipped" : ""}`}
+          style={{ cursor: "zoom-in", touchAction: "none" }}
+          onMouseMove={(e) => showLensAt(e.clientX, e.clientY)}
+          onMouseLeave={hideLens}
+          onTouchStart={(e) => {
+            const t = e.touches[0]; if (!t) return;
+            const x = t.clientX, y = t.clientY;
+            clearLongPress();
+            longPressTimer.current = setTimeout(() => {
+              showLensAt(x, y);
+              longPressTimer.current = null;
+            }, LONG_PRESS_MS);
+          }}
+          onTouchMove={(e) => {
+            const t = e.touches[0]; if (!t) return;
+            // Drag before long-press fires → treat as cancel (avoid surprise lens).
+            if (longPressTimer.current) { clearLongPress(); return; }
+            showLensAt(t.clientX, t.clientY);
+          }}
+          onTouchEnd={() => { clearLongPress(); hideLens(); }}
+          onTouchCancel={() => { clearLongPress(); hideLens(); }}
+        >
           <TCard item={item} glow />
         </div>
         <div className="modal__side">
@@ -203,27 +250,9 @@ export function CardModal({ item, caption, onClose }) {
           {caption && (
             <div className="mono" style={{ marginTop: 4 }}>{caption.where} · {caption.date}</div>
           )}
-          <p className="prose" style={{ fontSize: 16, marginTop: 16 }}>
-            Examine it as long as you like. Some readers never look at a card the right way up.
+          <p className="prose modal__hint">
+            Hover the card to magnify — on a phone, press and hold. Some readers never look at one the right way up.
           </p>
-
-          {/* magnifier — neutral detail window (sharp for vector, 440% for real art) */}
-          <div className="kicker kicker--dim" style={{ marginTop: 18 }}>Magnifier</div>
-          <div
-            className="zoom"
-            style={
-              item.img
-                ? { backgroundImage: `url(${item.img})`, backgroundSize: "440%", backgroundPosition: "66% 71%", transform: flipped ? "rotate(180deg)" : "none" }
-                : { overflow: "hidden", transform: flipped ? "rotate(180deg)" : "none" }
-            }
-          >
-            {!item.img && (
-              <div style={{ position: "absolute", top: 0, left: 0, width: Wc, height: Hc, transformOrigin: "0 0", transform: `translate(${120 - fx * Wc * S}px, ${120 - fy * Hc * S}px) scale(${S})` }}>
-                <CardFace item={item} />
-              </div>
-            )}
-            <div className="zoom__lab mono" style={{ background: "rgba(0,0,0,0.5)", padding: "3px 7px" }}>detail</div>
-          </div>
 
           <div className="row mt">
             <button className="btn btn--ghost" onClick={() => setFlipped((f) => !f)}>
@@ -232,6 +261,66 @@ export function CardModal({ item, caption, onClose }) {
             <button className="btn" onClick={onClose}>Close</button>
           </div>
         </div>
+      </div>
+
+      {lens && (
+        <Lens
+          x={lens.x} y={lens.y} fx={lens.fx} fy={lens.fy}
+          flipped={flipped} item={item}
+          Wc={Wc} Hc={Hc}
+        />
+      )}
+    </div>
+  );
+}
+
+/* Floating circular magnifier that follows the cursor / finger. */
+function Lens({ x, y, fx, fy, flipped, item, Wc, Hc }) {
+  // Offset the lens diagonally from the cursor; flip side near the right edge,
+  // clamp top/bottom so the disc never leaves the viewport.
+  const margin = 8, gap = 22;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const onRight = x + gap + LENS_SIZE + margin < vw;
+  const left = onRight ? x + gap : x - gap - LENS_SIZE;
+  let top = y - LENS_SIZE / 2;
+  top = Math.max(margin, Math.min(vh - LENS_SIZE - margin, top));
+
+  const base = {
+    position: "fixed", left, top,
+    width: LENS_SIZE, height: LENS_SIZE,
+    borderRadius: "50%",
+    border: "1.5px solid var(--accent)",
+    boxShadow: "0 18px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.6) inset, 0 0 22px rgba(216,64,31,0.25)",
+    background: "#161310",
+    overflow: "hidden",
+    pointerEvents: "none",
+    zIndex: 100,
+    transform: flipped ? "rotate(180deg)" : "none",
+  };
+
+  if (item.img) {
+    return (
+      <div
+        style={{
+          ...base,
+          backgroundImage: `url(${item.img})`,
+          backgroundSize: `${LENS_ZOOM * 100}%`,
+          backgroundPosition: `${fx * 100}% ${fy * 100}%`,
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+    );
+  }
+  // Placeholder card: render a scaled CardFace and translate to the focal point.
+  const S = LENS_ZOOM;
+  return (
+    <div style={base}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, width: Wc, height: Hc,
+        transformOrigin: "0 0",
+        transform: `translate(${LENS_SIZE / 2 - fx * Wc * S}px, ${LENS_SIZE / 2 - fy * Hc * S}px) scale(${S})`,
+      }}>
+        <CardFace item={item} />
       </div>
     </div>
   );
