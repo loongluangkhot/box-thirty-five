@@ -81,21 +81,21 @@ export function HubScreen({ ctx }) {
       </div>
       <div className="case-grid">
         <Panel className="tool" onClick={() => ctx.go("cards")}>
-          <div className="tool__thumb" style={{ width: 64 }}><TCard item={CARD_ITEMS.wheel} /></div>
+          <div className="tool__thumb" style={{ width: 44 }}><TCard item={CARD_ITEMS.wheel} /></div>
           <div className="tool__body">
             <Kicker>{ctx.cards.length} in hand</Kicker>
-            <h3 style={{ marginTop: 6 }}>Card Deck</h3>
-            <p>Lay them out and read the pictures. Click any card to examine it closely.</p>
+            <h3>Card Deck</h3>
+            <p>Lay them out and read the pictures.</p>
           </div>
         </Panel>
         <Panel className="tool" glow onClick={() => ctx.go("stakeout")}>
-          <div className="tool__thumb" style={{ width: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ width: 14, height: 14, background: "var(--accent)", transform: "rotate(45deg)", display: "block" }}></span>
+          <div className="tool__thumb" style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ width: 12, height: 12, background: "var(--accent)", transform: "rotate(45deg)", display: "block" }}></span>
           </div>
           <div className="tool__body">
             <Kicker>Commit the watch</Kicker>
-            <h3 style={{ marginTop: 6 }}>Set the Stakeout</h3>
-            <p>Name the night and the hour. Wait in the dark, and see who comes.</p>
+            <h3>Set the Stakeout</h3>
+            <p>Name the night and the hour.</p>
           </div>
         </Panel>
       </div>
