@@ -93,17 +93,6 @@ const LOC_ICONS = {
       <path d="M9 13.5 q3 2.4 6 0" />
     </g>
   ),
-  // The Crown & Anchor — an anchor
-  pub: (
-    <g>
-      <circle cx="12" cy="4.5" r="1.8" />
-      <line x1="12" y1="6.3" x2="12" y2="19.5" />
-      <line x1="8" y1="10" x2="16" y2="10" />
-      <path d="M4.5 13 a7.5 7.5 0 0 0 15 0" />
-      <line x1="4.5" y1="13" x2="4.5" y2="10.8" />
-      <line x1="19.5" y1="13" x2="19.5" y2="10.8" />
-    </g>
-  ),
 };
 const LOCK_ICON = (
   <g>

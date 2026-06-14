@@ -153,11 +153,6 @@ export const LOCATIONS = [
         reveal: `A cheap wall calendar, June showing. One date is ringed in pencil, gone over and over until the lead tore the paper: <strong>the 11th</strong>.`,
         effects: { set: ["calendarSeen"] },
       },
-      {
-        id: "keys", verb: "Search", label: "the wall of orphaned keys",
-        reveal: `Dozens of keys on numbered hooks, every tag aged to the same brown — except one, newer than the rest, the ink barely faded: <strong>“The Crown &amp; Anchor, cellar — NOT FINISHED.”</strong>`,
-        effects: { set: ["pubUnlocked"], unlock: ["pub"], unlockToast: { title: "New location", msg: "<b>The Crown &amp; Anchor</b> is open to you." } },
-      },
     ],
   },
   {
@@ -180,24 +175,6 @@ export const LOCATIONS = [
         requires: "operaDoorkeeper",
         reveal: `The dresser lowers her voice and whispers in a thick Italian accent: <span class="speak">“It's his mother's brooch. She passed when he was just a bambino. He wears it pinned inside his waistcoat, against the heart — some kind of lucky charm. Poor boy misses his mama every single day.”</span>`,
         effects: { set: ["operaDresser"] },
-      },
-    ],
-  },
-  {
-    id: "pub", name: "The Crown & Anchor", sub: "Public House · Rotherhithe", locked: true,
-    x: 74, y: 74,
-    blurb: "Sawdust, sour ale, and a fire that hasn't been lit since spring. The landlady knows the name before you finish saying it.",
-    hotspots: [
-      {
-        id: "landlady", verb: "Ask", label: "the landlady about Felix",
-        reveal: `<span class="speak">“Felix? Course I knew Felix. Rebuilding my cellar door all winter, good work too — then one week in spring last year he just stopped coming.”</span> She nods at the wall. <span class="speak">“Left his tab unpaid too. Not like him. Something took him off and never gave him back.”</span>`,
-        effects: { set: ["pubLandlady"] },
-      },
-      {
-        id: "cellar", verb: "Examine", label: "the unfinished cellar door",
-        requires: "pubLandlady",
-        reveal: `The work is immaculate as far as it goes. This Felix Marsh must be quite a master at his craft. His tools are still in their canvas roll on the floor, laid out in order, abandoned.`,
-        effects: { set: ["pubCellar"] },
       },
     ],
   },
