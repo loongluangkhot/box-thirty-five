@@ -58,7 +58,7 @@ The schedule shows Marlowe & Finch's safes that are covered by insurance. The to
 - Box 96 - Queen Victoria - Jewellery, fully appraised.
 
 ### Read Felix Marsh's bio (L128)
-No past criminal records. Felix Marsh, locksmith, lost his savings last year when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire **Nicholas Neo**, repaid every investor from his own pocket. Felix **refused the money** — too proud to take charity from a rich man.
+No past criminal records. Felix Marsh, locksmith, lost his savings last year when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire **Dr. Nicholas Neo**, repaid every investor from his own pocket. Felix **refused the money** — too proud to take charity from a rich man.
 
 ### Read Enrico Belloni's bio
 Petty crimes during his teenage years. Used to be involved with the Italian mafia. Now, he's a well-respected, well-paid member of the Opera, and a famous philanthropist and patron of the arts. A true inspirations to kids who grew up rough. *Is this heroic font just a facade?*

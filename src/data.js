@@ -170,7 +170,7 @@ export const LOCATIONS = [
       {
         id: "caseFile", verb: "Read", label: "Felix Marsh's bio",
         requires: "felixNamed",
-        reveal: `No past criminal records. Felix Marsh, locksmith, lost his savings last year when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire <strong>Nicholas Neo</strong>, repaid every investor from his own pocket. Felix <strong>refused the money</strong> — too proud to take charity from a rich man.`,
+        reveal: `No past criminal records. Felix Marsh, locksmith, lost his savings last year when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire <strong>Dr. Nicholas Neo</strong>, repaid every investor from his own pocket. Felix <strong>refused the money</strong> — too proud to take charity from a rich man.`,
       },
       {
         id: "belloniBio", verb: "Read", label: "Enrico Belloni's bio",

@@ -35,9 +35,9 @@ export function IntroScreen({ ctx }) {
             <div>
               <Kicker>Case 077 · Pre-Crime · A tarot deduction mystery</Kicker>
               <h1 style={{ margin: "14px 0 18px" }}>Box Thirty-Five</h1>
-              <p className="prose">London, present day. Three mornings running, the private bank of <strong>Marlowe &amp; Finch</strong> has found an envelope in the post before the doors open. The first held a hand-painted <strong>Wheel of Fortune, Major Arcana X</strong> — and a note in looping script:</p>
+              <p className="prose">London, June 6. The Chief Inspector of Scotland Yard calls. On the morning of June 4, the private bank of <strong>Marlowe &amp; Finch</strong> found an envelope in the post — a hand-painted <strong>Wheel of Fortune, Major Arcana X</strong>, and a note in looping script:</p>
               <div className="note">No fortune favors the unannounced. What is locked will open.</div>
-              <p className="prose" style={{ marginTop: 20 }}>The two that followed bore only cards — the <strong>Hermit</strong> on the 5th, <strong>Strength</strong> this morning, the 6th — no further word. A thief, promising to crack the vault. No date. No demand. Only the cards. The bank, terrified for its clients, comes quietly to Scotland Yard.</p>
+              <p className="prose" style={{ marginTop: 20 }}>A card has arrived each morning since — the <strong>Hermit</strong> on the 5th, <strong>Strength</strong> today. The manager is certain: this is the thief's modus operandi — <strong>to announce his plan before he executes it.</strong></p>
             </div>
           </div>
 
@@ -265,10 +265,10 @@ function fmtTime(totalMin) {
   const h24 = Math.floor(totalMin / 60), mm = totalMin % 60;
   const ap = h24 < 12 ? "AM" : "PM";
   let h12 = h24 % 12; if (h12 === 0) h12 = 12;
-  return `${h12}:${mm === 0 ? "00" : "30"} ${ap}`;
+  return `${h12}:${String(mm).padStart(2, "0")} ${ap}`;
 }
 
-// Set-the-watch stepper — alarm-clock style hour/minute steppers + AM/PM
+// Set-the-watch stepper — alarm-clock style hour/minute steppers + AM/PM, also typeable
 function StepperPicker({ value, onChange }) {
   const cur = value === null ? 0 : value; // default visual: 4:30 PM
   const dim = value === null;
@@ -276,18 +276,62 @@ function StepperPicker({ value, onChange }) {
   const h24 = Math.floor(cur / 60), mm = cur % 60;
   const ap = h24 < 12 ? "AM" : "PM";
   let h12 = h24 % 12; if (h12 === 0) h12 = 12;
+
+  const [hourDraft, setHourDraft] = useState(null);
+  const [minDraft, setMinDraft] = useState(null);
+
+  const commitHour = () => {
+    if (hourDraft === null) return;
+    const n = parseInt(hourDraft, 10);
+    if (!isNaN(n) && n >= 1 && n <= 12) {
+      const h24New = ap === "AM" ? (n === 12 ? 0 : n) : (n === 12 ? 12 : n + 12);
+      onChange(h24New * 60 + mm);
+    }
+    setHourDraft(null);
+  };
+  const commitMin = () => {
+    if (minDraft === null) return;
+    const n = parseInt(minDraft, 10);
+    if (!isNaN(n) && n >= 0 && n <= 59) {
+      onChange(h24 * 60 + n);
+    }
+    setMinDraft(null);
+  };
+
   return (
     <div className="stepper">
       <div className="stepper__col">
         <button className="stepper__btn" onClick={() => step(60)} aria-label="Hour up">▲</button>
-        <div className={`stepper__field${dim ? " is-dim" : ""}`}>{h12}</div>
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={2}
+          className={`stepper__field${dim ? " is-dim" : ""}`}
+          value={hourDraft ?? String(h12)}
+          onFocus={(e) => { setHourDraft(String(h12)); e.target.select(); }}
+          onChange={(e) => setHourDraft(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onBlur={commitHour}
+          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+          aria-label="Hour"
+        />
         <button className="stepper__btn" onClick={() => step(-60)} aria-label="Hour down">▼</button>
         <span className="stepper__lab">Hour</span>
       </div>
       <span className="stepper__colon">:</span>
       <div className="stepper__col">
         <button className="stepper__btn" onClick={() => step(30)} aria-label="Minute up">▲</button>
-        <div className={`stepper__field${dim ? " is-dim" : ""}`}>{mm === 0 ? "00" : "30"}</div>
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={2}
+          className={`stepper__field${dim ? " is-dim" : ""}`}
+          value={minDraft ?? String(mm).padStart(2, "0")}
+          onFocus={(e) => { setMinDraft(String(mm).padStart(2, "0")); e.target.select(); }}
+          onChange={(e) => setMinDraft(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onBlur={commitMin}
+          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+          aria-label="Minute"
+        />
         <button className="stepper__btn" onClick={() => step(-30)} aria-label="Minute down">▼</button>
         <span className="stepper__lab">Min</span>
       </div>
@@ -399,7 +443,7 @@ export function VaultScene({ ctx }) {
           <div className="prose">
             <p>You wait in the dark of the vault corridor with two constables, since ten past four. The bank sleeps. The city sleeps.</p>
             <p>At <strong>4:30</strong> exactly — the painted clock, stood on its head, made flesh — the grate swings open. Felix Marsh drops down into the pre-dawn dark, drill in hand, <em>The Fool</em> tucked in his coat pocket — his own card, numbered zero.</p>
-            <p>He never reaches Box 35. The handcuffs close before the drill touches metal. He read the hour upside down, as he read everything, and you were there to meet it.</p>
+            <p>His boots whisper along the marble. He passes Box 12, Box 24, Box 33 — and halts before the brass face of <strong>Box Thirty-Five</strong>, drill rising to meet it. He never hears the constables step from the dark behind him. A gloved hand closes on his wrist; the cuffs click shut; the drill clatters to the floor an inch short of metal. The culprit is successfully arrested! Mission accomplished!</p>
           </div>
           <div className="row mt-l">
             <button className="btn btn--solid" onClick={() => ctx.go("finale")}>And yet — what did he think was inside? →</button>
@@ -419,10 +463,7 @@ export function FinaleScene({ ctx }) {
           <span className="stamp"><span className="d"></span><Kicker>The vault · later that morning</Kicker></span>
           <h1 style={{ marginBottom: 22 }}>Box Thirty-Five</h1>
           <div className="prose">
-            <p>Felix is taken away laughing, then weeping, then quiet. The vault is untouched — and still the question gnaws. You ask the one man who knows. <strong>Nicholas Neo</strong> answers without hesitation: <span className="speak">"Gold, he must have thought. Bonds."</span> Then, simply: <span className="speak">"Open it."</span></p>
-            <p>Box 35 holds no gold and no bonds. Bundles of envelopes tied in ribbon — <strong>fifty years of birthday cards</strong>. From school friends. From his late wife. From a doorman he once helped through a hard winter. On top, a note in Neo's hand:</p>
-            <div className="note">To whoever opens this expecting riches: this is everything I own that cannot be replaced.</div>
-            <p style={{ marginTop: 22 }}>Neo presses the lightest charges, on one condition: Felix builds the bank's new vault on release — and accepts, this time, what he refused six years ago. Every year after, one more envelope joins Box 35. And one arrives at Felix's flat, signed simply, <em>N.N.</em></p>
+            <p>Felix is taken away laughing, then weeping, then quiet. The vault is untouched — and still the question gnaws. You ask the one man who knows. <strong>Dr. Nicholas Neo</strong> answers without hesitation: <span className="speak">"Gold, he must have thought. Bonds."</span> Then, simply: <span className="speak">"More precious than that. They are things I owned that cannot be replaced. Open the vault and see for yourself!"</span></p>
           </div>
           <div className="row mt-l">
             <span className="stamp"><span className="d"></span><Kicker>Case 077 · Closed</Kicker></span>
