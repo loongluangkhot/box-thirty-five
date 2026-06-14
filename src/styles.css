@@ -247,6 +247,17 @@ p { margin:0 0 1em; }
   background:#0b0b0b; box-shadow:0 8px 22px rgba(0,0,0,0.45);
 }
 
+/* Inspect-the-envelopes layout */
+.inspect-row { display:flex; flex-wrap:wrap; gap:22px; margin:14px 0 0; }
+.inspect-card { flex:1 1 140px; max-width:172px; margin:0; text-align:left; }
+.inspect-card img {
+  display:block; width:100%; height:auto;
+  filter:drop-shadow(0 10px 20px rgba(0,0,0,.5));
+}
+.inspect-card figcaption { margin-top:10px; }
+.inspect-name { font-family:var(--font-display); font-weight:700; text-transform:uppercase; color:var(--heading); font-size:12.5px; letter-spacing:.5px; }
+.inspect-date { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); margin-top:3px; }
+
 /* ---- Stakeout pickers ---- */
 .pick-readout { margin-top:18px; text-align:center; font-family:var(--font-mono); font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text); }
 .pick-readout b { color:var(--accent); font-weight:500; }
@@ -298,19 +309,6 @@ p { margin:0 0 1em; }
 .toast__date { font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--p-accent); }
 .toast__msg { font-family:var(--font-body); font-size:14px; color:var(--p-ink); }
 .toast__msg b { font-weight:700; }
-
-/* ---- Event banner (card arrival on hub) ---- */
-.ebanner {
-  display:flex; gap:18px; align-items:center; padding:16px 20px; margin:18px 0 0;
-  border:1px solid var(--mark); border-radius:var(--radius);
-  background:linear-gradient(120deg, var(--mark-soft), rgba(8,8,8,0.6));
-  animation:dropIn .42s ease;
-}
-.ebanner__thumb { width:62px; flex:none; transform:rotate(-4deg); }
-.ebanner__date { font-family:var(--font-mono); font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--mark); }
-.ebanner__name { font-family:var(--font-display); font-weight:800; text-transform:uppercase; color:var(--heading); font-size:18px; margin:2px 0 4px; }
-.ebanner__line { font-style:italic; color:var(--text); font-size:14.5px; }
-.ebanner__close { margin-left:auto; }
 
 /* ---- Intro card stage ---- */
 .intro { min-height:calc(100vh - 64px); display:flex; align-items:center; padding:56px 0; }
@@ -467,11 +465,6 @@ p { margin:0 0 1em; }
   .stepper__colon { font-size:28px; margin-top:36px; }
   .stepper__col--ap { margin-left:3px; gap:8px; margin-top:34px; }
   .ap { width:44px; height:40px; font-size:11px; }
-
-  /* Event banner wraps */
-  .ebanner { flex-wrap:wrap; gap:12px 16px; padding:14px 16px; }
-  .ebanner__thumb { width:50px; }
-  .ebanner__close { margin-left:0; }
 
   /* How-to / case tools already collapse via their own breakpoints */
   .howto__step { padding:18px; }

@@ -10,11 +10,11 @@ import {
   SortableContext, useSortable, arrayMove, rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CARD_ITEMS, CARD_EVENTS, CARD_CAPTIONS, LOCATIONS, OUTCOMES } from "./data.js";
+import { CARD_ITEMS, CARD_CAPTIONS, LOCATIONS, OUTCOMES } from "./data.js";
 import { TCard } from "./cards.jsx";
 import {
   Kicker, Panel, RichText, MapNode, LocIcon,
-  ActionRow, DialogueRow, EventBanner,
+  ActionRow, DialogueRow,
 } from "./components.jsx";
 
 export function capId(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -35,9 +35,9 @@ export function IntroScreen({ ctx }) {
             <div>
               <Kicker>Case 077 · Pre-Crime · A tarot deduction mystery</Kicker>
               <h1 style={{ margin: "14px 0 18px" }}>Box Thirty-Five</h1>
-              <p className="prose">London, present day. The private bank of <strong>Marlowe &amp; Finch</strong> receives an envelope with no return address. Inside: a hand-painted tarot card — <strong>The Wheel of Fortune, Major Arcana X</strong> — and a note in looping script:</p>
+              <p className="prose">London, present day. Three mornings running, the private bank of <strong>Marlowe &amp; Finch</strong> has found an envelope in the post before the doors open. The first held a hand-painted <strong>Wheel of Fortune, Major Arcana X</strong> — and a note in looping script:</p>
               <div className="note">No fortune favors the unannounced. What is locked will open.</div>
-              <p className="prose" style={{ marginTop: 20 }}>A thief, promising to crack the vault — and the bank, terrified for its clients, comes quietly to Scotland Yard. No date. No demand. Only the promise.</p>
+              <p className="prose" style={{ marginTop: 20 }}>The two that followed bore only cards — the <strong>Hermit</strong> on the 5th, <strong>Strength</strong> this morning, the 6th — no further word. A thief, promising to crack the vault. No date. No demand. Only the cards. The bank, terrified for its clients, comes quietly to Scotland Yard.</p>
             </div>
           </div>
 
@@ -71,8 +71,6 @@ export function IntroScreen({ ctx }) {
 
 /* ---------------- HUB (map + case tools) ---------------- */
 export function HubScreen({ ctx }) {
-  const { state } = ctx;
-  const banner = state.pendingBanner ? CARD_EVENTS[state.pendingBanner] : null;
   return (
     <div className="wrap screen">
       <div className="section-head">
@@ -105,9 +103,7 @@ export function HubScreen({ ctx }) {
         <Kicker dim>Free travel · {ctx.unlockedCount} locations open</Kicker>
       </div>
 
-      {banner && <EventBanner ev={banner} item={CARD_ITEMS[banner.card]} onLog={() => ctx.clearBanner()} />}
-
-      <div className="map" style={{ marginTop: banner ? 16 : 0 }}>
+      <div className="map">
         <div className="map__grid"></div>
         <div className="map__label"><Kicker dim>Investigation map</Kicker></div>
         {/* faint river */}

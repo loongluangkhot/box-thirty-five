@@ -10,7 +10,7 @@ import {
   StakeoutScreen, OutcomeScreen, VaultScene, FinaleScene, capId,
 } from "./screens.jsx";
 
-const SAVE_KEY = "box35-save-v1";
+const SAVE_KEY = "box35-save-v3";
 
 const VALID_SCREENS = new Set([
   "intro", "hub", "cards", "stakeout", "outcome", "vault", "finale",
@@ -24,12 +24,11 @@ const screenFromHash = () => {
 function initialState() {
   return {
     screen: "intro",
-    day: 4,
-    flags: { openedEnvelope: true },   // evidence + asked flags
+    day: 6,
+    flags: {},                         // evidence + asked flags
     done: {},                          // { locId: { hsId:true } }
-    cards: ["wheel"],
+    cards: [],
     unlocked: { bank: true, vesna: true, yard: true },
-    pendingBanner: null,
     hasFailed: false,
     lastNudge: "",
     outcome: null,
@@ -55,14 +54,6 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {}
   }, [state]);
-
-  // Migration: older saves set the borrowedDeck flag without adding Vesna's
-  // originals to the deck. Ensure they're present so they render in The Cards.
-  useEffect(() => {
-    if (!state.flags.borrowedDeck) return;
-    const need = ["wheel_original", "hermit_original"].filter((c) => !state.cards.includes(c));
-    if (need.length) setState((s) => ({ ...s, cards: [...s.cards, ...need] }));
-  }, []); // run once on mount
 
   // Initial URL ↔ state sync: URL wins if it names a valid, accessible screen.
   useEffect(() => {
@@ -130,20 +121,9 @@ export default function App() {
         effects.addCards.forEach((c) => { if (!draft.cards.includes(c)) draft.cards = [...draft.cards, c]; });
       }
       if (effects.unlock) { draft.unlocked = { ...draft.unlocked }; effects.unlock.forEach((u) => (draft.unlocked[u] = true)); }
-      if (effects.unlockToast) fire.push(effects.unlockToast);
+      if (effects.toast) fire.push(effects.toast);
     }
     return fire;
-  }
-
-  // Strength arrives once the case file is read AND the Fool is found.
-  function checkStrength(draft) {
-    if (!draft.flags.strengthArrived && draft.flags.caseFileSeen && draft.flags.foolFound) {
-      draft.flags = { ...draft.flags, strengthArrived: true };
-      if (!draft.cards.includes("strength")) draft.cards = [...draft.cards, "strength"];
-      draft.day = Math.max(draft.day, 6);
-      draft.pendingBanner = "strength";
-      // card arrival shows as a banner on the hub — no toast
-    }
   }
 
   const go = (screen) => setState((s) => ({ ...s, screen }));
@@ -151,20 +131,7 @@ export default function App() {
   const travel = (locId) => {
     const loc = LOCATIONS.find((l) => l.id === locId);
     if (loc.locked && !state.unlocked[locId]) return;
-    setState((s) => {
-      const draft = { ...s, screen: locId };
-      const fire = [];
-      // first Scotland Yard visit triggers the Hermit (June 5)
-      if (locId === "yard" && !draft.flags.hermitArrived) {
-        draft.flags = { ...draft.flags, hermitArrived: true, yardVisited: true };
-        if (!draft.cards.includes("hermit")) draft.cards = [...draft.cards, "hermit"];
-        draft.day = Math.max(draft.day, 5);
-        draft.pendingBanner = "hermit";
-        // card arrival shows as a banner on the hub — no toast
-      }
-      setTimeout(() => fire.forEach((t) => addToast(t.title, t.msg)), 30);
-      return draft;
-    });
+    setState((s) => ({ ...s, screen: locId }));
   };
 
   const doHotspot = (loc, hs) => {
@@ -174,7 +141,6 @@ export default function App() {
       const draft = { ...s };
       draft.done = { ...draft.done, [loc.id]: { ...(draft.done[loc.id] || {}), [hs.id]: true } };
       const fire = applyEffects(draft, hs.effects, hs.addCard);
-      checkStrength(draft);
       setTimeout(() => fire.forEach((t) => addToast(t.title, t.msg)), 30);
       return draft;
     });
@@ -187,7 +153,6 @@ export default function App() {
     setState((s) => {
       const draft = { ...s, flags: { ...s.flags, [askedFlag]: true } };
       const fire = applyEffects(draft, d.effects, null);
-      checkStrength(draft);
       setTimeout(() => fire.forEach((t) => addToast(t.title, t.msg)), 30);
       return draft;
     });
@@ -203,7 +168,6 @@ export default function App() {
     setState((s) => ({ ...s, screen: "outcome", outcome, hasFailed: true, lastNudge: OUTCOMES[outcome.key].q }));
   };
 
-  const clearBanner = () => setState((s) => ({ ...s, pendingBanner: null }));
   const reorderCards = (next) => setState((s) => ({ ...s, cards: next }));
   const restart = () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} setState(initialState()); setToasts([]); setModalCard(null); };
 
@@ -220,7 +184,7 @@ export default function App() {
     unlockedCount: Object.values(state.unlocked).filter(Boolean).length,
     go, travel, has, met,
     hotspotDone: (locId, hsId) => !!state.done[locId]?.[hsId],
-    doHotspot, ask, commitStakeout, clearBanner, reorderCards, restart, locStatus,
+    doHotspot, ask, commitStakeout, reorderCards, restart, locStatus,
     openCard: (item, caption) => setModalCard({ item, caption }),
   };
 

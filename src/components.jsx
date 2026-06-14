@@ -1,7 +1,6 @@
 /* ============================================================
    components.jsx — shared Forensic-Modern UI primitives
    ============================================================ */
-import { TCard } from "./cards.jsx";
 
 export function Kicker({ children, dim }) {
   return <span className={`kicker${dim ? " kicker--dim" : ""}`}>{children}</span>;
@@ -200,17 +199,3 @@ export function ToastHost({ toasts, onDismiss }) {
   );
 }
 
-/* ---------------- Event banner (card arrival, on hub) ---------------- */
-export function EventBanner({ ev, item, onLog }) {
-  return (
-    <div className="ebanner">
-      <div className="ebanner__thumb"><TCard item={item} /></div>
-      <div style={{ flex: 1 }}>
-        <div className="ebanner__date">{ev.date} · arrived at the bank in the morning post</div>
-        <div className="ebanner__name">{item.name} · {item.roman}</div>
-        <div className="ebanner__line">{ev.line}</div>
-      </div>
-      <button className="btn ebanner__close" onClick={onLog}>Keep it</button>
-    </div>
-  );
-}

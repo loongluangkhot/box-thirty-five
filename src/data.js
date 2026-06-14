@@ -48,24 +48,57 @@ export const LOCATIONS = [
     blurb: "Hush and brass and the smell of money kept too long. The manager hovers; the clients have not been told. Somewhere above the vault, a thief left his calling card.",
     hotspots: [
       {
-        id: "envelope", verb: "Open", label: "the first envelope",
-        reveal: `On the desk, an envelope with no return address. Inside, a single hand-painted card — <strong>The Wheel of Fortune</strong>, the numeral <strong>X</strong> in the corner — and a note in looping script.
-        <div class="note">No fortune favors the unannounced. What is locked will open.</div>
-        <p style="margin-top:14px">No date. No demand. Only the promise. The card is yours now; it joins <em>The Cards</em>.</p>`,
+        id: "manager", verb: "Talk to", label: "the manager",
+        reveal: `The manager keeps his hands clasped to stop them shaking. <span class="speak">"Three mornings now, and three envelopes, each found in the post before we opened. The first on the <strong>4th</strong> — the <strong>Wheel of Fortune</strong>, with a note inside. The second on the <strong>5th</strong> — the <strong>Hermit</strong>, no message at all. And this morning, the <strong>6th</strong> — <strong>Strength</strong>, again only the card. No name. No demand. We have told no one outside the firm."</span>`,
       },
       {
-        id: "vent", verb: "Unscrew", label: "the brass air vent",
-        reveal: `The screws turn too easily — their slots are bright where a fresh tool bit into the brass. Someone has had this grate off recently, and put it back with care. The shaft beyond runs down toward the vault corridor, just wide enough for a thin man.`,
+        id: "inspect", verb: "Inspect", label: "the envelopes and cards",
+        reveal: `<p>You lay the three envelopes and their cards side by side on the desk, in the order they arrived.</p>
+        <div class="inspect-row">
+          <figure class="inspect-card">
+            <img src="/wheel_of_fortune_altered.png" alt="The Wheel of Fortune" />
+            <figcaption>
+              <div class="inspect-name">The Wheel of Fortune · X</div>
+              <div class="inspect-date">June 4</div>
+            </figcaption>
+          </figure>
+          <figure class="inspect-card">
+            <img src="/hermit_altered.png" alt="The Hermit" />
+            <figcaption>
+              <div class="inspect-name">The Hermit · IX</div>
+              <div class="inspect-date">June 5</div>
+            </figcaption>
+          </figure>
+          <figure class="inspect-card">
+            <img src="/strength.png" alt="Strength" />
+            <figcaption>
+              <div class="inspect-name">Strength · VIII</div>
+              <div class="inspect-date">June 6 — this morning</div>
+            </figcaption>
+          </figure>
+        </div>
+        <p style="margin-top:18px">Only the first envelope held words — a single line in looping script:</p>
+        <div class="note">No fortune favors the unannounced. What is locked will open.</div>
+        <p style="margin-top:14px">You pocket all three cards.</p>`,
+        effects: {
+          set: ["inspectedCards"],
+          addCards: ["wheel", "hermit", "strength"],
+          toast: { title: "Card Deck", msg: "<b>Wheel of Fortune</b>, <b>Hermit</b>, and <b>Strength</b> added." },
+        },
+      },
+      {
+        id: "vent", verb: "Inspect", label: "the brass air vents",
+        reveal: `The air vent right in front of Box 35 caught your attention. A screw was loose and there are fresh scratch marks around the screws that catch the light. Someone has had this grate off recently, and put it back with care. The shaft beyond runs down toward the vault corridor, just wide enough for a thin man.`,
       },
       {
         id: "ledger", verb: "Pull", label: "the maintenance ledger",
         reveal: `Years of signatures for work on the locks and the vault door. One name recurs through the early entries, the contractor who overhauled the mechanism six years ago: <strong>FELIX MARSH, locksmith</strong>.`,
-        effects: { set: ["felixNamed"], unlock: ["workshop"], unlockToast: { title: "New location", msg: "<b>Felix's Workshop</b> is open to you." } },
+        effects: { set: ["felixNamed"], unlock: ["workshop"], toast: { title: "New location", msg: "<b>Felix's Workshop</b> is open to you." } },
       },
       {
         id: "visitors", verb: "Open", label: "the visitors' book",
         reveal: `Most entries are dull — couriers, clerks, the auditor. One oddity: the tenor <strong>Enrico Belloni</strong> signed in three times in a single week this spring, each visit only minutes long. A famous voice has no business in a bank vault three times in seven days.`,
-        effects: { set: ["operaUnlocked"], unlock: ["opera"], unlockToast: { title: "New location", msg: "<b>The Royal Opera House</b> is open to you." } },
+        effects: { set: ["operaUnlocked"], unlock: ["opera"], toast: { title: "New location", msg: "<b>The Royal Opera House</b> is open to you." } },
       },
     ],
   },
@@ -76,14 +109,18 @@ export const LOCATIONS = [
     dialogue: [
       {
         id: "showCard", q: "Show her the Wheel of Fortune card",
-        requires: "openedEnvelope",
+        requires: "inspectedCards",
         a: `She turns the Wheel over in her hands and her mouth tightens. <span class="speak">“The card design looks so similar to my own deck! Someone must have copied them — someone with artisanal talents. However, a trained eye will be able to spot the differences between this and my original deck.”</span>`,
       },
       {
         id: "borrowDeck", q: "Borrow her original deck",
         requires: "askedShowCard",
         a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. Where they differ, the copyist meant something.”</span> Vesna's true cards now sit on the table beside yours.`,
-        effects: { set: ["borrowedDeck"], addCards: ["wheel_original", "hermit_original"] },
+        effects: {
+          set: ["borrowedDeck"],
+          addCards: ["wheel_original", "hermit_original"],
+          toast: { title: "Card Deck", msg: "Vesna's <b>Wheel of Fortune</b> and <b>Hermit</b> originals added." },
+        },
       },
       {
         id: "askFelix", q: "Ask about Felix Marsh",
@@ -125,7 +162,6 @@ export const LOCATIONS = [
         id: "caseFile", verb: "Read", label: "Felix Marsh's bio",
         requires: "felixNamed",
         reveal: `No past criminal records. Felix Marsh, locksmith, lost his savings last year when a fund manager defrauded his clients. The fund's reclusive backer, the multimillionaire <strong>Nicholas Neo</strong>, repaid every investor from his own pocket. Felix <strong>refused the money</strong> — too proud to take charity from a rich man.`,
-        effects: { set: ["caseFileSeen"] },
       },
       {
         id: "belloniBio", verb: "Read", label: "Enrico Belloni's bio",
@@ -145,7 +181,7 @@ export const LOCATIONS = [
       {
         id: "fool", verb: "Unpin", label: "the card above the door",
         reveal: `Pinned dead-centre above the practice door, where a man would see it every working hour: <strong>The Fool</strong>, numbered <strong>0</strong>. It joins <em>The Cards</em>.`,
-        addCard: "fool", effects: { set: ["foolFound"] },
+        addCard: "fool",
       },
       {
         id: "calendar", verb: "Photograph", label: "the wall calendar",
@@ -179,19 +215,6 @@ export const LOCATIONS = [
     ],
   },
 ];
-
-/* ---------- CARD ARRIVALS (event-driven) ---------- */
-// The Wheel is present from the intro. Others arrive on conditions.
-export const CARD_EVENTS = {
-  hermit: {
-    flag: "hermitArrived", card: "hermit", date: "June 5",
-    line: "A lantern, and in it no star but a painted full moon.",
-  },
-  strength: {
-    flag: "strengthArrived", card: "strength", date: "June 6",
-    line: "It comes with no message at all. Only the numeral, one lower again.",
-  },
-};
 
 /* ---------- THE CARDS screen captions (date + location only) ---------- */
 export const CARD_CAPTIONS = {
