@@ -76,6 +76,31 @@ export function HubScreen({ ctx }) {
   return (
     <div className="wrap screen">
       <div className="section-head">
+        <h2>The Case</h2><span className="rule"></span>
+        <Kicker dim>Your own tools</Kicker>
+      </div>
+      <div className="case-grid">
+        <Panel className="tool" onClick={() => ctx.go("cards")}>
+          <div className="tool__thumb" style={{ width: 64 }}><TCard item={CARD_ITEMS.wheel} /></div>
+          <div className="tool__body">
+            <Kicker>{ctx.cards.length} in hand</Kicker>
+            <h3 style={{ marginTop: 6 }}>Card Deck</h3>
+            <p>Lay them out and read the pictures. Click any card to examine it closely.</p>
+          </div>
+        </Panel>
+        <Panel className="tool" glow onClick={() => ctx.go("stakeout")}>
+          <div className="tool__thumb" style={{ width: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ width: 14, height: 14, background: "var(--accent)", transform: "rotate(45deg)", display: "block" }}></span>
+          </div>
+          <div className="tool__body">
+            <Kicker>Commit the watch</Kicker>
+            <h3 style={{ marginTop: 6 }}>Set the Stakeout</h3>
+            <p>Name the night and the hour. Wait in the dark, and see who comes.</p>
+          </div>
+        </Panel>
+      </div>
+
+      <div className="section-head">
         <h2>London</h2><span className="rule"></span>
         <Kicker dim>Free travel · {ctx.unlockedCount} locations open</Kicker>
       </div>
@@ -94,31 +119,6 @@ export function HubScreen({ ctx }) {
             status={ctx.locStatus(loc)}
             onClick={() => ctx.travel(loc.id)} />
         ))}
-      </div>
-
-      <div className="section-head">
-        <h2>The Case</h2><span className="rule"></span>
-        <Kicker dim>Your own tools</Kicker>
-      </div>
-      <div className="case-grid">
-        <Panel className="tool" onClick={() => ctx.go("cards")}>
-          <div className="tool__thumb" style={{ width: 64 }}><TCard item={CARD_ITEMS.wheel} /></div>
-          <div className="tool__body">
-            <Kicker>{ctx.cards.length} in hand</Kicker>
-            <h3 style={{ marginTop: 6 }}>The Cards</h3>
-            <p>Lay them out and read the pictures. Click any card to examine it closely.</p>
-          </div>
-        </Panel>
-        <Panel className="tool" glow onClick={() => ctx.go("stakeout")}>
-          <div className="tool__thumb" style={{ width: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ width: 14, height: 14, background: "var(--accent)", transform: "rotate(45deg)", display: "block" }}></span>
-          </div>
-          <div className="tool__body">
-            <Kicker>Commit the watch</Kicker>
-            <h3 style={{ marginTop: 6 }}>Set the Stakeout</h3>
-            <p>Name the night and the hour. Wait in the dark, and see who comes.</p>
-          </div>
-        </Panel>
       </div>
     </div>
   );
@@ -216,7 +216,7 @@ export function CardsScreen({ ctx }) {
         <button className="btn btn--ghost" onClick={() => ctx.go("hub")}>← London</button>
       </div>
       <Kicker>The detective's table</Kicker>
-      <h1 style={{ margin: "10px 0 8px" }}>The Cards</h1>
+      <h1 style={{ margin: "10px 0 8px" }}>Card Deck</h1>
       <p className="prose" style={{ marginBottom: 26 }}>Everything you carry, laid out as you please. Drag a card to rearrange it on the table — on a phone, press and hold first.</p>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={cards} strategy={rectSortingStrategy}>
@@ -274,7 +274,7 @@ function fmtTime(totalMin) {
 
 // Set-the-watch stepper — alarm-clock style hour/minute steppers + AM/PM
 function StepperPicker({ value, onChange }) {
-  const cur = value === null ? 16 * 60 + 30 : value; // default visual: 4:30 PM
+  const cur = value === null ? 0 : value; // default visual: 4:30 PM
   const dim = value === null;
   const step = (d) => onChange((((cur + d) % 1440) + 1440) % 1440);
   const h24 = Math.floor(cur / 60), mm = cur % 60;

@@ -21,18 +21,20 @@ export function RichText({ html, className = "prose" }) {
 }
 
 /* ---------------- HUD ---------------- */
-export function HUD({ day, cardCount, sound, onSound, onCards, onRestart }) {
+export function HUD({ day, cardCount, sound, onSound, onCards, onRestart, onTitle }) {
   return (
     <div className="hud">
       <div className="hud__left">
-        <span className="hud__tick"></span>
-        <span className="hud__word">Box Thirty&#8209;Five</span>
+        <button className="hud__title" onClick={onTitle} aria-label="Back to intro">
+          <span className="hud__tick"></span>
+          <span className="hud__word">Box Thirty&#8209;Five</span>
+        </button>
         <span className="hud__chip">Case 077 · Pre&#8209;Crime</span>
       </div>
       <div className="hud__right">
         <span className="hud__night">Morning of <b>June&nbsp;{day}</b></span>
         <button className="hud__chip" style={{ cursor: "pointer", color: "var(--accent)", borderColor: "var(--accent-dim)" }} onClick={onCards}>
-          The Cards · {cardCount}
+          Card Deck · {cardCount}
         </button>
         <button className={`iconbtn${sound ? " iconbtn--on" : ""}`} title="Sound" onClick={onSound}>
           {sound ? "♪" : "○"}

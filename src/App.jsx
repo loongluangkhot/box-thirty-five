@@ -12,6 +12,15 @@ import {
 
 const SAVE_KEY = "box35-save-v1";
 
+const VALID_SCREENS = new Set([
+  "intro", "hub", "cards", "stakeout", "outcome", "vault", "finale",
+  ...LOCATIONS.map((l) => l.id),
+]);
+const screenFromHash = () => {
+  const h = window.location.hash.replace(/^#\/?/, "");
+  return VALID_SCREENS.has(h) ? h : null;
+};
+
 function initialState() {
   return {
     screen: "intro",
@@ -54,6 +63,47 @@ export default function App() {
     const need = ["wheel_original", "hermit_original"].filter((c) => !state.cards.includes(c));
     if (need.length) setState((s) => ({ ...s, cards: [...s.cards, ...need] }));
   }, []); // run once on mount
+
+  // Initial URL ↔ state sync: URL wins if it names a valid, accessible screen.
+  useEffect(() => {
+    const fromHash = screenFromHash();
+    if (fromHash && fromHash !== state.screen) {
+      const loc = LOCATIONS.find((l) => l.id === fromHash);
+      const blocked = loc && loc.locked && !state.unlocked[fromHash];
+      if (!blocked) {
+        setState((s) => ({ ...s, screen: fromHash }));
+        return;
+      }
+    }
+    window.history.replaceState(null, "", `#/${state.screen}`);
+  }, []);
+
+  // Push a history entry whenever the screen changes (skipped on the initial
+  // mount because the sync effect above already aligned the hash).
+  useEffect(() => {
+    const target = `#/${state.screen}`;
+    if (window.location.hash !== target) {
+      window.history.pushState(null, "", target);
+    }
+  }, [state.screen]);
+
+  // Browser back/forward → set screen from URL; refuse to land on locked locations.
+  useEffect(() => {
+    const onPop = () => {
+      const next = screenFromHash() || "intro";
+      setState((s) => {
+        if (s.screen === next) return s;
+        const loc = LOCATIONS.find((l) => l.id === next);
+        if (loc && loc.locked && !s.unlocked[next]) {
+          window.history.replaceState(null, "", "#/hub");
+          return { ...s, screen: "hub" };
+        }
+        return { ...s, screen: next };
+      });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   const addToast = useCallback((title, msg) => {
     const id = ++toastId.current;
@@ -194,6 +244,7 @@ export default function App() {
         <HUD day={state.day} cardCount={state.cards.length} sound={state.sound}
           onSound={() => setState((st) => ({ ...st, sound: !st.sound }))}
           onCards={() => go("cards")}
+          onTitle={() => go("intro")}
           onRestart={() => { if (confirm("Restart the case from the beginning?")) restart(); }} />
       )}
       {Screen}
