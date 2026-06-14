@@ -115,7 +115,7 @@ export const LOCATIONS = [
       {
         id: "borrowDeck", q: "Borrow her original deck",
         requires: "askedShowCard",
-        a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. Where they differ, the copyist meant something.”</span> Vesna's true cards now sit on the table beside yours.`,
+        a: `She wraps the deck in black silk and presses it into your hands. <span class="speak">“Mine are honest. Lay them beside the forgeries on your own table. <b>Where they differ, the copyist meant something.</b>”</span> Vesna's true cards now sit on the table beside yours.`,
         effects: {
           set: ["borrowedDeck"],
           addCards: ["wheel_original", "hermit_original"],
@@ -132,7 +132,7 @@ export const LOCATIONS = [
       {
         id: "almanac", verb: "Study", label: "the lunar almanac on the shelf",
         image: "/lunar_almanac.png",
-        reveal: `An almanac, open to <strong>June</strong>. The month's phases are marked clearly on the almanac.`,
+        reveal: `An almanac, open to <strong>June</strong>. The month's phases are marked clearly on the almanac: <b>New moon on the 1st, full moon on the 14th, eclipse on the 22th.</b>`,
         effects: { set: ["almanacSeen"] },
       },
       {
@@ -146,6 +146,10 @@ export const LOCATIONS = [
     x: 48, y: 54,
     blurb: "Green-shaded lamps and the rustle of paper. Down here the dead cases sleep in boxes. Yours is wide awake, and getting louder by the morning.",
     hotspots: [
+      {
+        id: "chief", verb: "Talk to", label: "the Chief Inspector",
+        reveal: `The Chief Inspector taps the file. <span class="speak">"Thirty years of robberies and heists, and the lot of them did everything they could <b>not</b> to be noticed. This one is the first to <b>announce his arrival</b> — and so blatantly. Three cards through the door of the bank he means to crack."</span>`,
+      },
       {
         id: "insurance", verb: "Pull", label: "the bank's insurance schedule",
         reveal: `The schedule shows Marlowe &amp; Finch's safes that are covered by insurance. The top five most valuable safes are:
@@ -165,7 +169,7 @@ export const LOCATIONS = [
       },
       {
         id: "belloniBio", verb: "Read", label: "Enrico Belloni's bio",
-        reveal: `Petty crimes during his teenage years. Used to be involved with the Italian mafia. Now, he's a well-respected, well-paid member of the Opera, and a famous philanthropist and patron of the arts. A true inspiration to kids who grew up rough. <em>Is this heroic front just a façade?</em>`,
+        reveal: `Petty crimes during his teenage years. Used to be involved with the Italian mafia. Now, he's a well-respected, well-paid member of the Opera, and a famous philanthropist and patron of the arts. A true inspiration to kids who grew up rough. But, is this heroic front just a façade?`,
       },
     ],
   },
