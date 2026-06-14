@@ -127,12 +127,17 @@ export const LOCATIONS = [
         requires: "felixNamed",
         a: `<span class="speak">“Felix. Yes — a client from years ago, and an avid tarot reader himself, better than most.”</span> She almost smiles. <span class="speak">“But he never read under his own name. In the circle, he goes by the alias <strong>The Fool</strong> — the wanderer who carries nothing, fears nothing. He has a peculiar way of reading his cards…”</span> Vesna furrows her brows. <span class="speak">“Felix cut the deck upside down. Every card he read <strong>reversed</strong> — always. ‘Fortune only tells me the truth standing on its head,’ he used to say. It drove the others mad. He never once read a card the right way up.”</span>`,
       },
+      {
+        id: "reversed", q: "Ask what she meant by reading a card reversed",
+        requires: "askedAskFelix",
+        a: `<span class="speak">“Reversed simply means upside down. A card means one thing the right way up, and often quite another when reversed.”</span> She taps the <strong>Strength</strong> card on the table. <span class="speak">Strength signifies compassion and forgiveness the right way up. However, if reversed, it could mean <strong>wrath and revenge!</strong>”</span>`,
+      },
     ],
     hotspots: [
       {
         id: "almanac", verb: "Study", label: "the lunar almanac on the shelf",
         image: "/lunar_almanac.png",
-        reveal: `An almanac, open to <strong>June</strong>. The month's phases are marked clearly on the almanac: <b>New moon on the 1st, full moon on the 14th, eclipse on the 22th.</b>`,
+        reveal: `This month's phases are marked clearly on the almanac: <strong>New moon on the 1st, full moon on the 14th, eclipse on the 22th.</strong>`,
         effects: { set: ["almanacSeen"] },
       },
       {
@@ -148,7 +153,7 @@ export const LOCATIONS = [
     hotspots: [
       {
         id: "chief", verb: "Talk to", label: "the Chief Inspector",
-        reveal: `The Chief Inspector taps the file. <span class="speak">"Thirty years of robberies and heists, and the lot of them did everything they could <b>not</b> to be noticed. This one is the first to <b>announce his arrival</b> — and so blatantly. Three cards through the door of the bank he means to crack."</span>`,
+        reveal: `The Chief Inspector taps the file. <span class="speak">"Thirty years of robberies and heists, and the lot of them did everything they could <b>not</b> to be noticed. This one is the first to <b>announce his arrival</b> — and so blatantly. My gut tells me that the date and time must be hidden in plain sight in these cards!"</span>`,
       },
       {
         id: "insurance", verb: "Pull", label: "the bank's insurance schedule",

@@ -205,9 +205,8 @@ export default function App() {
   return (
     <div className="stage">
       {showHud && (
-        <HUD day={state.day} cardCount={state.cards.length} sound={state.sound}
+        <HUD day={state.day} sound={state.sound}
           onSound={() => setState((st) => ({ ...st, sound: !st.sound }))}
-          onCards={() => go("cards")}
           onTitle={() => go("intro")}
           onRestart={() => { if (confirm("Restart the case from the beginning?")) restart(); }} />
       )}
