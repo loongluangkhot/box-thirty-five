@@ -98,4 +98,27 @@ export const WISHES = [
       { type: "video", src: "/wishes/masa.mp4" },
     ],
   },
+  {
+    slot: 10,
+    name: "Ha",
+    items: [
+      { type: "text", from: "Ha", src: "/wishes/ha.md" },
+    ],
+  },
+  {
+    slot: 11,
+    name: "Johan",
+    items: [
+      { type: "text", from: "Johan", src: "/wishes/johan.md" },
+      { type: "photo", src: "/wishes/johan.jpeg" },
+    ],
+  },
+  {
+    slot: 12,
+    name: "Junhao",
+    items: [
+      // { type: "text", from: "Johan", src: "/wishes/johan.md" },
+      // { type: "photo", src: "/wishes/johan.jpeg" },
+    ],
+  }
 ];

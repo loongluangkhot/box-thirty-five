@@ -17,19 +17,23 @@ function shuffle(arr) {
 const PUNS = [
   "Aged to perfection",
   "Another lap around the sun",
-  "Vintage, and still corking",
   "Officially a classic",
   "Older, but no wiser",
   "Level thirty‑five unlocked",
   "Wrinkles? Laugh lines.",
   "Fully ripened",
-  "Still got it. Mostly.",
-  "A fine year for it",
+  "Best of luck to your lower back this year.",
+  "Still a rockstar. Just in bed by 9 PM.",
+  "Older? Yes. Grown up? Never.",
+  "Another year closer to senior discounts.",
+  "Still doing stupid things, just slower.",
+  "Another year of successfully faking adulthood.",
+  "Spoiler alert: You’re older.",
 ];
 
 /* Face cutouts in /public/faces/ — one per slot. The list skips
    nic6 (file doesn't exist) but is otherwise just nic0..nic10. */
-const FACES = ["nic", "nic1", "nic2", "nic3", "nic4", "nic5", "nic7", "nic8", "nic9", "nic10"];
+const FACES = ["nic", "nic1", "nic2", "nic3", "nic4", "nic5", "nic6", "nic7", "nic8", "nic9", "nic10", "nic11", "nic12", "nic13", "nic14", "nic15", "nic16", ];
 function Motif({ v }) {
   const name = FACES[((v % FACES.length) + FACES.length) % FACES.length];
   return <img className="m-face" src={`/faces/${name}.png`} alt="" />;
@@ -39,7 +43,7 @@ function CardFront({ p, idx, onOpen }) {
   return (
     <button className="bcard" onClick={() => onOpen(idx)}>
       <div className={"bcard__cover paper-" + (p.slot % 3)}>
-        <span className="bcard__motif"><Motif v={p.slot % 10} /></span>
+        <span className="bcard__motif"><Motif v={p.slot} /></span>
         <div className="bcard__greet">
           Happy Birthday
           <small>{PUNS[p.slot % PUNS.length]}</small>
