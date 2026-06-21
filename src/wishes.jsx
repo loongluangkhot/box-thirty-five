@@ -2,8 +2,19 @@
    wishes.jsx — Box Thirty-Five · the mantel of birthday cards.
    One card per person. Open it to read what they sent.
    ============================================================ */
-import { useState, useEffect, useMemo } from "react";
-import { WISHES } from "./wishes-data.js";
+import { useState, useEffect, useMemo, createContext, useContext } from "react";
+import { getMusicPlayer } from "./ambience.js";
+
+const FacesContext = createContext([]);
+
+/* Wishes ambience track is 137 bpm. The rAF loop in WishesScene reads
+   currentTime off the YT.Player on every frame and writes 4 variant
+   sets of CSS vars (--bob-y/r/s-0..3); each .m-face picks one variant
+   via className so the mantel reads as a crowd of distinct dancers all
+   locked to the same beat. YT.Player getters are cached internally so
+   polling every frame is cheap. */
+const BPM = 137;
+const BEAT_SECONDS = 60 / BPM;
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -31,12 +42,14 @@ const PUNS = [
   "Spoiler alert: You’re older.",
 ];
 
-/* Face cutouts in /public/faces/ — one per slot. The list skips
-   nic6 (file doesn't exist) but is otherwise just nic0..nic10. */
-const FACES = ["nic", "nic1", "nic2", "nic3", "nic4", "nic5", "nic6", "nic7", "nic8", "nic9", "nic10", "nic11", "nic12", "nic13", "nic14", "nic15", "nic16", ];
 function Motif({ v }) {
-  const name = FACES[((v % FACES.length) + FACES.length) % FACES.length];
-  return <img className="m-face" src={`/faces/${name}.png`} alt="" />;
+  const faces = useContext(FacesContext);
+  if (!faces.length) return null;
+  const name = faces[((v % faces.length) + faces.length) % faces.length];
+  // 4 bobble variations (on-beat right/left, off-beat, half-time) assigned
+  // deterministically per slot so the mantel reads as a mixed crowd dancing.
+  const variant = ((v % 4) + 4) % 4;
+  return <img className={`m-face m-face--${variant}`} src={`/faces/${name}`} alt="" />;
 }
 
 function CardFront({ p, idx, onOpen }) {
@@ -256,15 +269,34 @@ function parseCardSlug() {
 }
 
 export function WishesScene({ ctx }) {
-  const people = useMemo(() => shuffle(WISHES), []);
+  const [wishes, setWishes] = useState(null);
+  const [faces, setFaces] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      fetch("/wishes/manifest.json").then((r) => r.json()),
+      fetch("/faces/manifest.json").then((r) => r.json()),
+    ]).then(([wishesData, facesData]) => {
+      if (cancelled) return;
+      setWishes(wishesData);
+      setFaces(facesData);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const people = useMemo(() => wishes ? shuffle(wishes) : [], [wishes]);
   const n = people.length;
   const findIdxBySlug = (slug) => people.findIndex((p) => slugify(p.name) === slug);
-  const [open, setOpen] = useState(() => {
+  const [open, setOpen] = useState(null);
+
+  // Once data has loaded, open whichever card the URL points to.
+  useEffect(() => {
+    if (!wishes) return;
     const slug = parseCardSlug();
-    if (!slug) return null;
+    if (!slug) return;
     const idx = findIdxBySlug(slug);
-    return idx >= 0 ? idx : null;
-  });
+    if (idx >= 0) setOpen(idx);
+  }, [wishes]);
 
   // Sync state ← URL on browser back/forward.
   useEffect(() => {
@@ -311,24 +343,98 @@ export function WishesScene({ ctx }) {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  // Phase-lock the face bobbles to the YouTube ambience. Every frame we ask
+  // the player for currentTime and write 4 sets of (y, r, scale) CSS vars.
+  // Each .m-face picks its variant via className so the mantel mixes
+  // headbangers, swayers, poppers, and wigglers — all locked to the beat.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = document.documentElement;
+    let rafId;
+    const tick = () => {
+      let phase = null, halfPhase = null, doublePhase = null;
+      const p = getMusicPlayer();
+      if (p) {
+        try {
+          // YT.PlayerState.PLAYING === 1. When paused/buffering, settle to rest.
+          const state = typeof p.getPlayerState === "function" ? p.getPlayerState() : null;
+          if (state === 1) {
+            const t = p.getCurrentTime();
+            if (typeof t === "number" && !Number.isNaN(t)) {
+              phase = (((t / BEAT_SECONDS) % 1) + 1) % 1;
+              halfPhase = (((t / (2 * BEAT_SECONDS)) % 1) + 1) % 1;
+              doublePhase = (((t / (BEAT_SECONDS / 2)) % 1) + 1) % 1;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // [y0,r0,s0, y1,r1,s1, y2,r2,s2, y3,r3,s3] — scale defaults to 1 at rest.
+      const out = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+      if (phase !== null) {
+        const θ  = phase       * 2 * Math.PI;
+        const θH = halfPhase   * 2 * Math.PI;
+        const θD = doublePhase * 2 * Math.PI;
+
+        // V0 HEADBANG — exaggerated vertical, barely any tilt
+        out[0] = -10 * (1 + Math.cos(θ)) / 2;
+        out[1] = 1.5 * Math.sin(θ);
+        out[2] = 1;
+
+        // V1 SWAY — slow half-time pendulum, big rotation
+        out[3] = -2 * (1 + Math.cos(θH)) / 2;
+        out[4] = 12 * Math.sin(θH);
+        out[5] = 1;
+
+        // V2 POP — scale pulse, snappy attack at phase 0 with exp decay
+        out[6] = -2 * (1 + Math.cos(θ)) / 2;
+        out[7] = 0;
+        out[8] = 1 + 0.18 * Math.exp(-phase * 4);
+
+        // V3 WIGGLE — eighth-note jitter, fast small y + r at 2x speed
+        out[9]  = -3 * (1 + Math.cos(θD)) / 2;
+        out[10] =  4 * Math.sin(θD);
+        out[11] =  1;
+      }
+      for (let i = 0; i < 4; i++) {
+        root.style.setProperty(`--bob-y-${i}`, `${out[i * 3].toFixed(2)}px`);
+        root.style.setProperty(`--bob-r-${i}`, `${out[i * 3 + 1].toFixed(2)}deg`);
+        root.style.setProperty(`--bob-s-${i}`, out[i * 3 + 2].toFixed(3));
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(rafId);
+      for (let i = 0; i < 4; i++) {
+        root.style.removeProperty(`--bob-y-${i}`);
+        root.style.removeProperty(`--bob-r-${i}`);
+        root.style.removeProperty(`--bob-s-${i}`);
+      }
+    };
+  }, []);
+
   return (
-    <div className="wrap screen">
-      <p className="vault-instruction">Open a card to read what they sent</p>
+    <FacesContext.Provider value={faces}>
+      <div className="wrap screen">
+        <p className="vault-instruction">Nicholas, we love you!</p>
 
-      <div className="mantel">
-        {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={openCard} />)}
+        <div className="mantel">
+          {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={openCard} />)}
+        </div>
+
+        <p className="vault-more">More coming!</p>
+
+        {open !== null && people[open] && (
+          <OpenCard
+            p={people[open]} idx={open} total={n}
+            onClose={closeCard}
+            onPrev={() => navCard((open - 1 + n) % n)}
+            onNext={() => navCard((open + 1) % n)}
+          />
+        )}
       </div>
-
-      <p className="vault-more">More coming!</p>
-
-      {open !== null && people[open] && (
-        <OpenCard
-          p={people[open]} idx={open} total={n}
-          onClose={closeCard}
-          onPrev={() => navCard((open - 1 + n) % n)}
-          onNext={() => navCard((open + 1) % n)}
-        />
-      )}
-    </div>
+    </FacesContext.Provider>
   );
 }

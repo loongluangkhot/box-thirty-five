@@ -10,6 +10,7 @@ import {
   StakeoutScreen, OutcomeScreen, VaultScene, FinaleScene, capId,
 } from "./screens.jsx";
 import { WishesScene } from "./wishes.jsx";
+import { setMusicPlayer } from "./ambience.js";
 
 const SAVE_KEY = "box35-save-v3";
 
@@ -42,7 +43,13 @@ function initialState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
-    if (raw) return { ...initialState(), ...JSON.parse(raw) };
+    if (raw) {
+      // `screen` is persisted so a refresh keeps you on the same page, but a
+      // fresh visit to "/" should always start at intro rather than dropping
+      // you back where you last were.
+      const { screen, ...rest } = JSON.parse(raw);
+      return { ...initialState(), ...rest };
+    }
   } catch (e) {}
   return initialState();
 }
@@ -251,53 +258,132 @@ export default function App() {
 }
 
 /* Optional ambience: a looping YouTube stream gated by the HUD toggle.
-   The iframe is always mounted so mute/unmute pauses/resumes in place
-   (rather than restarting). `key={videoId}` re-mounts only when the
-   track itself swaps (entering / leaving the wishes page). */
+   The iframe mounts ONCE — we swap tracks via the YT API (loadVideoById /
+   cueVideoById) rather than re-mounting. Re-mounting via `key={videoId}`
+   raced two effects: the iframeReady reset queued for the next render
+   while the player-init effect ran with the stale `true`, so two YT.Players
+   ended up claiming the same iframe and `onReady` for the live one never
+   fired — leaving the mute toggle dead on the wishes page.
+
+   We wrap the iframe in a YT.Player so callers (e.g. the wishes
+   bobbleheads) can read getCurrentTime() and phase-lock to the music. */
 function Ambience({ videoId, playing }) {
   const iframeRef = useRef(null);
-  const [ready, setReady] = useState(false);
+  const playerRef = useRef(null);
+  const [playerReady, setPlayerReady] = useState(false);
+  // Freeze the videoId used in the iframe src so the iframe never re-mounts.
+  // Subsequent changes to `videoId` are applied via the YT API below.
+  const initialVideoId = useRef(videoId).current;
+  const loadedVideoId = useRef(initialVideoId);
 
-  // The iframe re-mounts when the track swaps; reset readiness.
-  useEffect(() => { setReady(false); }, [videoId]);
-
-  // Set the default volume once the iframe is ready.
+  // Load the YT IFrame API script once for the whole app.
   useEffect(() => {
-    if (!ready) return;
-    const iframe = iframeRef.current;
-    if (!iframe?.contentWindow) return;
-    iframe.contentWindow.postMessage(
-      JSON.stringify({ event: "command", func: "setVolume", args: [20] }),
-      "*",
-    );
-  }, [ready]);
+    if (window.YT?.Player) return;
+    if (document.querySelector("script[data-yt-api]")) return;
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    tag.dataset.ytApi = "1";
+    document.body.appendChild(tag);
+  }, []);
 
-  // Whenever the iframe is ready or the desired state changes, push the
-  // command. Without this gate, a pauseVideo sent before the iframe is
-  // ready gets dropped — and the autoplay then sneaks through.
+  // Wrap the iframe in a YT.Player once — the YT API tolerates an iframe
+  // whose content is still loading; onReady fires when it's actually ready.
   useEffect(() => {
-    if (!ready) return;
-    const iframe = iframeRef.current;
-    if (!iframe?.contentWindow) return;
-    iframe.contentWindow.postMessage(
-      JSON.stringify({ event: "command", func: playing ? "playVideo" : "pauseVideo", args: "" }),
-      "*",
-    );
-  }, [playing, ready]);
+    let cancelled = false;
+    const init = () => {
+      if (cancelled || !iframeRef.current) return;
+      new window.YT.Player(iframeRef.current, {
+        events: {
+          onReady: (e) => {
+            if (cancelled) return;
+            e.target.setVolume(20);
+            playerRef.current = e.target;
+            setMusicPlayer(e.target);
+            setPlayerReady(true);
+          },
+          onStateChange: (e) => {
+            // 0 = ENDED. loadVideoById drops the iframe's loop=1 setting, so
+            // we restart manually to keep the ambience continuous after a swap.
+            if (e.data === 0) e.target.playVideo();
+          },
+        },
+      });
+    };
+    if (window.YT?.Player) {
+      init();
+    } else {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { prev?.(); init(); };
+    }
+    return () => {
+      cancelled = true;
+      playerRef.current = null;
+      setMusicPlayer(null);
+    };
+  }, []);
 
-  // No `autoplay=1` — we drive playback exclusively via postMessage so the
+  // Swap tracks via the YT API when videoId changes. `loadedVideoId` starts
+  // at `initialVideoId` (what the iframe src loaded), so the first run is a
+  // no-op when the desired track still matches.
+  useEffect(() => {
+    if (!playerReady) return;
+    if (videoId === loadedVideoId.current) return;
+    const p = playerRef.current;
+    if (!p) return;
+    try {
+      if (playing) p.loadVideoById(videoId);
+      else p.cueVideoById(videoId);
+      loadedVideoId.current = videoId;
+    } catch (e) {}
+  }, [videoId, playerReady]);
+
+  // Drive play/pause off the YT.Player once it's ready. Initial state is
+  // applied here too (covers the case where `playing` was already true at
+  // mount time — pre-onReady postMessage commands get dropped).
+  //
+  // After a refresh the persisted state.sound may be true but the browser
+  // hasn't seen a user gesture yet, so our playVideo() call may be silently
+  // blocked. Attach a one-shot gesture catcher that retries on the first
+  // interaction; if play already succeeded, the retry is a harmless no-op.
+  useEffect(() => {
+    if (!playerReady) return;
+    const p = playerRef.current;
+    if (!p) return;
+    try {
+      if (playing) p.playVideo(); else p.pauseVideo();
+    } catch (e) {}
+    if (!playing) return;
+    const onGesture = () => {
+      try {
+        // YT.PlayerState.PLAYING === 1. Skip the retry if we're already
+        // playing so a user-initiated mute-toggle click doesn't briefly
+        // re-trigger playback before the pause goes through.
+        if (p.getPlayerState() !== 1) p.playVideo();
+      } catch (e) {}
+      cleanup();
+    };
+    const cleanup = () => {
+      window.removeEventListener("pointerdown", onGesture, true);
+      window.removeEventListener("keydown", onGesture, true);
+      window.removeEventListener("touchstart", onGesture, true);
+    };
+    window.addEventListener("pointerdown", onGesture, true);
+    window.addEventListener("keydown", onGesture, true);
+    window.addEventListener("touchstart", onGesture, true);
+    return cleanup;
+  }, [playing, playerReady]);
+
+  // No `autoplay=1` — we drive playback exclusively via the YT API so the
   // muted state on load doesn't get bypassed by the browser's autoplay grant.
-  const src = `https://www.youtube.com/embed/${videoId}`
-    + `?loop=1&playlist=${videoId}`
+  const src = `https://www.youtube.com/embed/${initialVideoId}`
+    + `?loop=1&playlist=${initialVideoId}`
     + `&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`;
   return (
     <iframe
       ref={iframeRef}
-      key={videoId}
       src={src}
       title="Ambient music"
       allow="autoplay; encrypted-media"
-      onLoad={() => setReady(true)}
       style={{
         position: "fixed", left: "-9999px", top: "-9999px",
         width: 200, height: 120, border: 0,

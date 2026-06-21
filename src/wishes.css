@@ -142,11 +142,26 @@
   letter-spacing:0; line-height:1.05; font-size:20px; text-wrap:balance;
 }
 
-/* ---- cover motif: face cutout ---- */
+/* ---- cover motif: face cutout ----
+   Bobble transform is driven from JS (WishesScene's rAF loop), which reads
+   the YouTube ambience player's currentTime and phase-locks four variant
+   pairs (--bob-y-0..3, --bob-r-0..3) to the beat. Each face picks its
+   variant via .m-face--N, which aliases the variant-specific vars onto
+   the generic --bob-y / --bob-r the transform reads. */
 .stage--wishes .m-face {
   width:100px; height:100px; object-fit:contain; display:block;
+  transform-origin:50% 90%;
+  transform:translateY(var(--bob-y, 0px)) rotate(var(--bob-r, 0deg)) scale(var(--bob-s, 1));
+  will-change:transform;
 }
+.stage--wishes .m-face--0 { --bob-y:var(--bob-y-0, 0px); --bob-r:var(--bob-r-0, 0deg); --bob-s:var(--bob-s-0, 1); }
+.stage--wishes .m-face--1 { --bob-y:var(--bob-y-1, 0px); --bob-r:var(--bob-r-1, 0deg); --bob-s:var(--bob-s-1, 1); }
+.stage--wishes .m-face--2 { --bob-y:var(--bob-y-2, 0px); --bob-r:var(--bob-r-2, 0deg); --bob-s:var(--bob-s-2, 1); }
+.stage--wishes .m-face--3 { --bob-y:var(--bob-y-3, 0px); --bob-r:var(--bob-r-3, 0deg); --bob-s:var(--bob-s-3, 1); }
 .stage--wishes .canvas__head .m-face { width:100px; height:100px; }
+@media (prefers-reduced-motion: reduce) {
+  .stage--wishes .m-face { transform:none; }
+}
 
 /* ============================================================
    OPEN CARD — modal canvas
