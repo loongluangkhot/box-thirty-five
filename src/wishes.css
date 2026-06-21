@@ -138,8 +138,8 @@
   border-top:1px solid var(--hair);
 }
 .stage--wishes .bcard__name {
-  font-family:var(--font-display); font-weight:800; text-transform:uppercase; color:var(--heading);
-  letter-spacing:.4px; line-height:1.15; font-size:16px; text-wrap:balance;
+  font-family:"Caveat",cursive; font-weight:700; color:var(--heading);
+  letter-spacing:0; line-height:1.05; font-size:20px; text-wrap:balance;
 }
 
 /* ---- cover motifs ---- */
@@ -249,10 +249,10 @@
 
 .stage--wishes .cv-note { text-align:left; }
 .stage--wishes .cv-body {
-  font-family:"Cormorant Garamond",Georgia,serif; font-style:italic;
-  font-size:22px; line-height:1.6; color:#2a2317; text-wrap:pretty;
+  font-family:"Caveat",cursive; font-style:normal;
+  font-size:20px; line-height:1.4; color:#2a2317; text-wrap:pretty;
 }
-.stage--wishes .cv-body p { margin:0 0 0.7em; }
+.stage--wishes .cv-body p { margin:0 0 0.5em; }
 .stage--wishes .cv-body p:last-child { margin-bottom:0; }
 .stage--wishes .cv-loading { color:var(--text-dim); letter-spacing:.2em; }
 .stage--wishes .cv-sign {
