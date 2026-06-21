@@ -31,8 +31,20 @@ export function HUD({ day, sound, hideDay, onSound, onRestart, onTitle }) {
       </div>
       <div className="hud__right">
         {!hideDay && <span className="hud__night"><b>June&nbsp;{day}</b></span>}
-        <button className={`iconbtn${sound ? " iconbtn--on" : ""}`} title="Sound" onClick={onSound}>
-          {sound ? "♪" : "○"}
+        <button className={`iconbtn${sound ? " iconbtn--on" : ""}`} title={sound ? "Mute" : "Unmute"} aria-label={sound ? "Mute" : "Unmute"} onClick={onSound}>
+          {sound ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 10 V14 H7.5 L12.5 17.5 V6.5 L7.5 10 Z" fill="currentColor" />
+              <path d="M16 9.5 Q 18 12, 16 14.5" />
+              <path d="M18.8 7.4 Q 22 12, 18.8 16.6" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 10 V14 H7.5 L12.5 17.5 V6.5 L7.5 10 Z" fill="currentColor" />
+              <line x1="16.5" y1="9" x2="22" y2="15" />
+              <line x1="22" y1="9" x2="16.5" y2="15" />
+            </svg>
+          )}
         </button>
         <button className="iconbtn" title="Restart the case" onClick={onRestart}>⟲</button>
       </div>

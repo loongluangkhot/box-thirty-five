@@ -31,9 +31,9 @@
   border-bottom:1px solid var(--p-border);
 }
 .stage--wishes .hud__word { color:var(--heading); }
-.stage--wishes .hud__chip { color:var(--text); border-color:var(--p-border); }
 .stage--wishes .iconbtn { color:var(--text); border-color:var(--p-border); }
 .stage--wishes .iconbtn:hover { color:var(--accent); border-color:var(--accent); }
+.stage--wishes .iconbtn--on { color:var(--accent); border-color:var(--accent); }
 .stage--wishes .hud__title:hover .hud__word { color:var(--accent); }
 .stage--wishes .hud__night { color:var(--text); }
 .stage--wishes .hud__night b { color:var(--accent); }

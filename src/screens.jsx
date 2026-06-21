@@ -33,7 +33,7 @@ export function IntroScreen({ ctx }) {
           <div className="intro__grid">
             <div className="intro__card"><TCard item={wheel} glow onClick={() => ctx.openCard(wheel, CARD_CAPTIONS.wheel)} /></div>
             <div>
-              <Kicker>Case 077 · Pre-Crime · A tarot deduction mystery</Kicker>
+              <Kicker>A tarot deduction mystery</Kicker>
               <h1 style={{ margin: "14px 0 18px" }}>Box Thirty-Five</h1>
               <p className="prose">London, June 6. The Chief Inspector of Scotland Yard calls. On the morning of June 4, the private bank of <strong>Marlowe &amp; Finch</strong> found an envelope in the post — a hand-painted <strong>Wheel of Fortune, Major Arcana X</strong>, and a note in looping script:</p>
               <div className="note">No fortune favors the unannounced. What is locked will open.</div>

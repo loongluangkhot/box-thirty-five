@@ -205,45 +205,65 @@ export default function App() {
   else if (s === "wishes") Screen = <WishesScene ctx={ctx} />;
   else Screen = <LocationScreen ctx={ctx} />;
 
-  const showHud = s !== "intro";
   const inWishes = s === "wishes";
 
   return (
     <div className={`stage${inWishes ? " stage--wishes" : ""}`}>
-      {showHud && (
-        <HUD day={state.day} sound={state.sound}
-          hideDay={inWishes}
-          onSound={() => setState((st) => ({ ...st, sound: !st.sound }))}
-          onTitle={() => go("intro")}
-          onRestart={() => { if (confirm("Restart the case from the beginning?")) restart(); }} />
-      )}
+      <HUD day={state.day} sound={state.sound}
+        hideDay={inWishes}
+        onSound={() => setState((st) => ({ ...st, sound: !st.sound }))}
+        onTitle={() => go("intro")}
+        onRestart={() => { if (confirm("Restart the case from the beginning?")) restart(); }} />
       {Screen}
       <ToastHost toasts={toasts} onDismiss={dismissToast} />
       {modalCard && <CardModal item={modalCard.item} caption={modalCard.caption} onClose={() => setModalCard(null)} />}
-      {state.sound && <Ambience />}
+      <Ambience videoId={inWishes ? "o_UfJHtmFOY" : "qYaKzpMdBaM"} playing={state.sound} />
     </div>
   );
 }
 
-/* tiny optional ambience: a low rain-ish noise bed via WebAudio, gated by the toggle */
-function Ambience() {
+/* Optional ambience: a looping YouTube stream gated by the HUD toggle.
+   The iframe is always mounted so mute/unmute pauses/resumes in place
+   (rather than restarting). `key={videoId}` re-mounts only when the
+   track itself swaps (entering / leaving the wishes page). */
+function Ambience({ videoId, playing }) {
+  const iframeRef = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  // The iframe re-mounts when the track swaps; reset readiness.
+  useEffect(() => { setReady(false); }, [videoId]);
+
+  // Whenever the iframe is ready or the desired state changes, push the
+  // command. Without this gate, a pauseVideo sent before the iframe is
+  // ready gets dropped — and the autoplay then sneaks through.
   useEffect(() => {
-    let ctx, src, gain;
-    try {
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const bufferSize = 2 * ctx.sampleRate;
-      const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      let last = 0;
-      for (let i = 0; i < bufferSize; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; data[i] = last * 3.2; }
-      src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-      const filt = ctx.createBiquadFilter(); filt.type = "lowpass"; filt.frequency.value = 720;
-      gain = ctx.createGain(); gain.gain.value = 0.0;
-      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
-      src.start();
-      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 1.2);
-    } catch (e) {}
-    return () => { try { gain && gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3); setTimeout(() => ctx && ctx.close(), 400); } catch (e) {} };
-  }, []);
-  return null;
+    if (!ready) return;
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow) return;
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: playing ? "playVideo" : "pauseVideo", args: "" }),
+      "*",
+    );
+  }, [playing, ready]);
+
+  // No `autoplay=1` — we drive playback exclusively via postMessage so the
+  // muted state on load doesn't get bypassed by the browser's autoplay grant.
+  const src = `https://www.youtube.com/embed/${videoId}`
+    + `?loop=1&playlist=${videoId}`
+    + `&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`;
+  return (
+    <iframe
+      ref={iframeRef}
+      key={videoId}
+      src={src}
+      title="Ambient music"
+      allow="autoplay; encrypted-media"
+      onLoad={() => setReady(true)}
+      style={{
+        position: "fixed", left: "-9999px", top: "-9999px",
+        width: 200, height: 120, border: 0,
+        opacity: 0, pointerEvents: "none",
+      }}
+    />
+  );
 }

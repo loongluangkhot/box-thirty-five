@@ -104,10 +104,6 @@ p { margin:0 0 1em; }
 .hud__title:hover .hud__word { color:var(--accent); }
 .hud__tick { width:11px; height:11px; background:var(--accent); transform:rotate(45deg); flex:none; }
 .hud__word { font-family:var(--font-display); font-weight:800; text-transform:uppercase; color:#fbf7ec; font-size:16px; letter-spacing:1px; transition:color 0.15s; }
-.hud__chip {
-  font-family:var(--font-mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
-  color:var(--text-dim); border:1px solid var(--p-border); border-radius:var(--radius); padding:5px 10px; white-space:nowrap;
-}
 .hud__night { font-family:var(--font-mono); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text); font-weight:800; }
 .hud__night b { color:var(--accent); }
 .iconbtn {
@@ -390,7 +386,6 @@ p { margin:0 0 1em; }
   /* HUD: condense, allow wrap to a second row */
   .hud { padding:10px 14px; gap:8px 12px; flex-wrap:wrap; }
   .hud__left, .hud__right { gap:10px; }
-  .hud__left .hud__chip { display:none; }          /* hide the "Case 077" chip */
   .hud__word { font-size:14px; letter-spacing:.5px; }
   .hud__tick { width:9px; height:9px; }
   .hud__night { font-size:9.5px; letter-spacing:1px; }
