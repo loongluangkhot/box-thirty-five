@@ -230,6 +230,24 @@ function CanvasItem({ item }) {
   return null;
 }
 
+/* Group consecutive photo/video items so they can flow side-by-side.
+   Text and audio always sit on their own row. */
+function groupItems(items) {
+  const out = [];
+  let row = null;
+  const flowable = (t) => t === "photo" || t === "video";
+  for (const it of items) {
+    if (flowable(it.type)) {
+      if (!row) { row = { kind: "row", items: [] }; out.push(row); }
+      row.items.push(it);
+    } else {
+      row = null;
+      out.push({ kind: "single", item: it });
+    }
+  }
+  return out;
+}
+
 function OpenCard({ p, idx, total, onClose, onPrev, onNext }) {
   return (
     <div className="card-scrim" onClick={onClose}>
@@ -277,7 +295,15 @@ function OpenCard({ p, idx, total, onClose, onPrev, onNext }) {
           </div>
 
           <div className="canvas__body">
-            {p.items.map(it => <CanvasItem key={it.name} item={it} />)}
+            {groupItems(p.items).map((g, i) =>
+              g.kind === "row"
+                ? (
+                  <div key={i} className="cv-row">
+                    {g.items.map((it, j) => <CanvasItem key={j} item={it} />)}
+                  </div>
+                )
+                : <CanvasItem key={i} item={g.item} />
+            )}
           </div>
 
           <div className="canvas__foot">With love, {p.name}</div>

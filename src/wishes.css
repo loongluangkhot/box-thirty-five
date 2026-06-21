@@ -228,6 +228,15 @@
 
 .stage--wishes .cv-item { animation:wishesItemIn .5s ease both; }
 
+/* a row of consecutive photo/video items — flows side-by-side
+   when they fit, wraps when they don't */
+.stage--wishes .cv-row {
+  display:flex; flex-wrap:wrap; justify-content:center;
+  align-items:flex-start; gap:16px;
+  animation:wishesItemIn .5s ease both;
+}
+.stage--wishes .cv-row > .cv-item { animation:none; margin:0; }
+
 .stage--wishes .cv-note { text-align:left; }
 .stage--wishes .cv-body {
   font-family:"Caveat",cursive; font-style:normal;
