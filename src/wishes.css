@@ -127,6 +127,7 @@
   margin-top:auto; text-align:center;
   font-family:"Cormorant Garamond",Georgia,serif; font-style:italic;
   font-size:25px; line-height:1.05; color:var(--heading);
+  color: var(--accent);
 }
 .stage--wishes .bcard__greet small {
   display:block; margin-top:6px;
@@ -140,6 +141,7 @@
 .stage--wishes .bcard__name {
   font-family:"Caveat",cursive; font-weight:700; color:var(--heading);
   letter-spacing:0; line-height:1.05; font-size:20px; text-wrap:balance;
+  overflow-wrap:anywhere;
 }
 
 /* ---- cover motif: face cutout ----
@@ -149,7 +151,7 @@
    variant via .m-face--N, which aliases the variant-specific vars onto
    the generic --bob-y / --bob-r the transform reads. */
 .stage--wishes .m-face {
-  width:100px; height:100px; object-fit:contain; display:block;
+  width:80px; height:80px; object-fit:contain; display:block;
   transform-origin:50% 90%;
   transform:translateY(var(--bob-y, 0px)) rotate(var(--bob-r, 0deg)) scale(var(--bob-s, 1));
   will-change:transform;
@@ -322,4 +324,11 @@
 }
 @media (max-width:430px) {
   .stage--wishes .mantel { grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); }
+  .stage--wishes .bcard__cover { padding:36px 14px 16px; }
+  .stage--wishes .bcard__motif { height:48px; margin:12px 0 0; }
+  .stage--wishes .m-face { width:74px; height:74px; }
+  .stage--wishes .bcard__greet { font-size:21px; }
+  .stage--wishes .bcard__greet small { font-size:8px; letter-spacing:1.3px; }
+  .stage--wishes .bcard__sender { margin-top:10px; padding-top:10px; }
+  .stage--wishes .bcard__name { font-size:18px; }
 }

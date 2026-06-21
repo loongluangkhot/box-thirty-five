@@ -424,7 +424,7 @@ export function WishesScene({ ctx }) {
           {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={openCard} />)}
         </div>
 
-        <p className="vault-more">More coming!</p>
+        <p className="vault-more">You deserve all the cakes in the world!</p>
 
         {open !== null && people[open] && (
           <OpenCard
