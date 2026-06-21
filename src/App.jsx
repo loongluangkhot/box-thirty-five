@@ -36,7 +36,7 @@ function initialState() {
     hasFailed: false,
     lastNudge: "",
     outcome: null,
-    sound: false,
+    sound: true,
   };
 }
 

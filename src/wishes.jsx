@@ -238,7 +238,7 @@ function OpenCard({ p, idx, total, onClose, onPrev, onNext }) {
         <div className="canvas" key={idx}>
           <div className="canvas__head">
             <span className="bcard__motif"><Motif v={p.slot % 10} /></span>
-            <div className="canvas__eyebrow">Happy Birthday, Nicholas</div>
+            <div className="canvas__eyebrow">Happy Birthday, Nic</div>
           </div>
 
           <div className="canvas__body">
@@ -418,7 +418,7 @@ export function WishesScene({ ctx }) {
   return (
     <FacesContext.Provider value={faces}>
       <div className="wrap screen">
-        <p className="vault-instruction">Nicholas, we love you!</p>
+        <p className="vault-instruction">Nic, we love you ♥</p>
 
         <div className="mantel">
           {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={openCard} />)}
