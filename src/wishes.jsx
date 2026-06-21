@@ -254,17 +254,60 @@ function OpenCard({ p, idx, total, onClose, onPrev, onNext }) {
   );
 }
 
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+function parseCardSlug() {
+  const m = window.location.hash.match(/^#\/wishes\/([^/]+)$/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
 export function WishesScene({ ctx }) {
-  const [open, setOpen] = useState(null);
   const people = useMemo(() => shuffle(WISHES), []);
   const n = people.length;
+  const findIdxBySlug = (slug) => people.findIndex((p) => slugify(p.name) === slug);
+  const [open, setOpen] = useState(() => {
+    const slug = parseCardSlug();
+    if (!slug) return null;
+    const idx = findIdxBySlug(slug);
+    return idx >= 0 ? idx : null;
+  });
+
+  // Sync state ← URL on browser back/forward.
+  useEffect(() => {
+    const onPop = () => {
+      const slug = parseCardSlug();
+      if (!slug) { setOpen(null); return; }
+      const idx = findIdxBySlug(slug);
+      setOpen(idx >= 0 ? idx : null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [people]);
+
+  // Opening a card pushes a new history entry. Closing pops it (so the browser
+  // back button is the close gesture). Prev/next within the modal replaces
+  // the entry so back doesn't visit every card you flipped past.
+  const urlFor = (idx) => `#/wishes/${slugify(people[idx].name)}`;
+  const openCard = (idx) => {
+    setOpen(idx);
+    window.history.pushState(null, "", urlFor(idx));
+  };
+  const navCard = (idx) => {
+    setOpen(idx);
+    window.history.replaceState(null, "", urlFor(idx));
+  };
+  const closeCard = () => {
+    if (parseCardSlug() !== null) window.history.back();
+    else setOpen(null);
+  };
 
   useEffect(() => {
     const onKey = (e) => {
       if (open === null) return;
-      if (e.key === "Escape") setOpen(null);
-      else if (e.key === "ArrowRight") setOpen((o) => (o + 1) % n);
-      else if (e.key === "ArrowLeft") setOpen((o) => (o - 1 + n) % n);
+      if (e.key === "Escape") closeCard();
+      else if (e.key === "ArrowRight") navCard((open + 1) % n);
+      else if (e.key === "ArrowLeft") navCard((open - 1 + n) % n);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -280,17 +323,17 @@ export function WishesScene({ ctx }) {
       <p className="vault-instruction">Open a card to read what they sent</p>
 
       <div className="mantel">
-        {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={setOpen} />)}
+        {people.map((p, i) => <CardFront key={p.slot} p={p} idx={i} onOpen={openCard} />)}
       </div>
 
       <p className="vault-more">More coming!</p>
 
-      {open !== null && (
+      {open !== null && people[open] && (
         <OpenCard
           p={people[open]} idx={open} total={n}
-          onClose={() => setOpen(null)}
-          onPrev={() => setOpen((o) => (o - 1 + n) % n)}
-          onNext={() => setOpen((o) => (o + 1) % n)}
+          onClose={closeCard}
+          onPrev={() => navCard((open - 1 + n) % n)}
+          onNext={() => navCard((open + 1) % n)}
         />
       )}
     </div>

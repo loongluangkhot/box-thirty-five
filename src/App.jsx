@@ -18,7 +18,9 @@ const VALID_SCREENS = new Set([
   ...LOCATIONS.map((l) => l.id),
 ]);
 const screenFromHash = () => {
-  const h = window.location.hash.replace(/^#\/?/, "");
+  // Only the first path segment selects the screen; the rest is owned by
+  // the screen itself (e.g. "#/wishes/3" is still the wishes screen).
+  const h = window.location.hash.replace(/^#\/?/, "").split("/")[0];
   return VALID_SCREENS.has(h) ? h : null;
 };
 
@@ -71,11 +73,12 @@ export default function App() {
   }, []);
 
   // Push a history entry whenever the screen changes (skipped on the initial
-  // mount because the sync effect above already aligned the hash).
+  // mount because the sync effect above already aligned the hash). We only
+  // care about the first segment — preserving any screen-owned subpath.
   useEffect(() => {
-    const target = `#/${state.screen}`;
-    if (window.location.hash !== target) {
-      window.history.pushState(null, "", target);
+    const currentScreen = window.location.hash.replace(/^#\/?/, "").split("/")[0];
+    if (currentScreen !== state.screen) {
+      window.history.pushState(null, "", `#/${state.screen}`);
     }
   }, [state.screen]);
 
