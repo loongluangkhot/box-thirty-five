@@ -51,7 +51,35 @@ export default function App() {
   const [state, setState] = useState(loadState);
   const [toasts, setToasts] = useState([]);
   const [modalCard, setModalCard] = useState(null);
+  const [duckAmbience, setDuckAmbience] = useState(false);
   const toastId = useRef(0);
+
+  // Duck the ambience while any user-played audio/video with sound is playing.
+  // `play` / `pause` / `ended` don't bubble, so we listen in the capture phase.
+  useEffect(() => {
+    const live = new Set();
+    const sync = () => setDuckAmbience(live.size > 0);
+    const onPlay = (e) => {
+      const el = e.target;
+      if (!(el instanceof HTMLMediaElement)) return;
+      if (el.muted) return;                    // muted autoplay (e.g. the vault videos) shouldn't duck
+      live.add(el);
+      sync();
+    };
+    const onStop = (e) => {
+      const el = e.target;
+      if (!(el instanceof HTMLMediaElement)) return;
+      if (live.delete(el)) sync();
+    };
+    document.addEventListener("play", onPlay, true);
+    document.addEventListener("pause", onStop, true);
+    document.addEventListener("ended", onStop, true);
+    return () => {
+      document.removeEventListener("play", onPlay, true);
+      document.removeEventListener("pause", onStop, true);
+      document.removeEventListener("ended", onStop, true);
+    };
+  }, []);
 
   // persist (everything but transient UI)
   useEffect(() => {
@@ -217,7 +245,7 @@ export default function App() {
       {Screen}
       <ToastHost toasts={toasts} onDismiss={dismissToast} />
       {modalCard && <CardModal item={modalCard.item} caption={modalCard.caption} onClose={() => setModalCard(null)} />}
-      <Ambience videoId={inWishes ? "o_UfJHtmFOY" : "qYaKzpMdBaM"} playing={state.sound} />
+      <Ambience videoId={inWishes ? "o_UfJHtmFOY" : "qYaKzpMdBaM"} playing={state.sound && !duckAmbience} />
     </div>
   );
 }
