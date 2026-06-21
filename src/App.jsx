@@ -233,6 +233,17 @@ function Ambience({ videoId, playing }) {
   // The iframe re-mounts when the track swaps; reset readiness.
   useEffect(() => { setReady(false); }, [videoId]);
 
+  // Set the default volume once the iframe is ready.
+  useEffect(() => {
+    if (!ready) return;
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow) return;
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: "setVolume", args: [20] }),
+      "*",
+    );
+  }, [ready]);
+
   // Whenever the iframe is ready or the desired state changes, push the
   // command. Without this gate, a pauseVideo sent before the iframe is
   // ready gets dropped — and the autoplay then sneaks through.
