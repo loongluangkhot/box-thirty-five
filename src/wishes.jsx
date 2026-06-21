@@ -58,10 +58,24 @@ function Motif({ v }) {
     case 6:
       return (
         <span className="m-balloons">
-          <i className="bl bl--a"></i>
-          <i className="bl bl--b"></i>
-          <i className="str str--a"></i>
-          <i className="str str--b"></i>
+          <svg viewBox="0 0 60 64" width="56" height="60" fill="none"
+               stroke="currentColor" strokeWidth="1.4"
+               strokeLinecap="round" strokeLinejoin="round">
+            {/* Back balloon (smaller, behind) */}
+            <ellipse cx="38" cy="22" rx="9" ry="11.5" fill="var(--accent-soft)" />
+            <path d="M35.7 33 L38 35.2 L40.3 33 Z" fill="currentColor" stroke="none" />
+            <path d="M38 35.2 C 38 40, 33 44, 30 50" />
+            {/* Front balloon (larger, in front) */}
+            <ellipse cx="20" cy="19" rx="10.5" ry="13" fill="var(--accent-soft)" />
+            <path d="M17.5 31 L20 33.5 L22.5 31 Z" fill="currentColor" stroke="none" />
+            <path d="M20 33.5 C 20 39, 26 44, 30 50" />
+            {/* Highlight on the front balloon */}
+            <path d="M14.5 13 Q 13 17, 14 22" strokeWidth="1" opacity=".6" />
+            {/* Tie point where the two strings meet */}
+            <circle cx="30" cy="50" r="1.6" fill="currentColor" stroke="none" />
+            {/* Short tail past the tie */}
+            <path d="M30 50 L 29.5 54" />
+          </svg>
         </span>
       );
     case 7:
@@ -154,19 +168,19 @@ function CanvasItem({ item }) {
   }
   if (item.type === "photo") {
     return (
-      <figure className={"cv-item cv-photo" + (item.src ? " cv-photo--src" : "")}>
+      <div className={"cv-item cv-photo" + (item.src ? " cv-photo--src" : "")}>
         <div className={"frame" + (item.src ? "" : " ph ph--photo")}>
           {item.src
             ? <img src={item.src} alt={item.label || ""} />
             : <span className="ph__tag">Photo · drop file</span>}
         </div>
         {item.label && <figcaption className="cv-cap">{item.label}</figcaption>}
-      </figure>
+      </div>
     );
   }
   if (item.type === "audio") {
     return (
-      <figure className="cv-item cv-voice">
+      <div className="cv-item cv-voice">
         <div className="voice-card">
           {item.src ? (
             <audio controls src={item.src}></audio>
@@ -191,12 +205,12 @@ function CanvasItem({ item }) {
           {item.from && <span className="cv-cap__by"> — {item.from}</span>}
           {!item.src && " · drop audio"}
         </figcaption>
-      </figure>
+      </div>
     );
   }
   if (item.type === "video") {
     return (
-      <figure className={"cv-item cv-video" + (item.src ? " cv-video--src" : "")}>
+      <div className={"cv-item cv-video" + (item.src ? " cv-video--src" : "")}>
         <div className={"frame" + (item.src ? "" : " ph ph--video")}>
           {item.src
             ? <video
@@ -210,7 +224,7 @@ function CanvasItem({ item }) {
             : <><span className="play-tri"></span><span className="ph__tag ph__tag--btm">Video · drop file</span></>}
         </div>
         {item.label && <figcaption className="cv-cap">{item.label}</figcaption>}
-      </figure>
+      </div>
     );
   }
   return null;
@@ -222,11 +236,30 @@ function OpenCard({ p, idx, total, onClose, onPrev, onNext }) {
       <div className="card-modal" onClick={(e) => e.stopPropagation()}>
         <div className="card-modal__bar">
           <div className="card-modal__title">
-            <span className="namecake" aria-hidden="true">
-              <i className="namecake__flame"></i>
-              <i className="namecake__candle"></i>
-              <i className="namecake__base"></i>
-            </span>
+            <svg className="namecake" viewBox="0 0 30 30" fill="none"
+                 stroke="currentColor" strokeWidth="1.4"
+                 strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {/* Wrapper: gently tapered trapezoid */}
+              <path d="M 9.5 18 L 10.8 26.5 L 19.2 26.5 L 20.5 18 Z" fill="var(--accent-soft)" />
+              {/* Wrapper rim */}
+              <line x1="9.5" y1="18" x2="20.5" y2="18" />
+              {/* Wrapper flutes */}
+              <line x1="13" y1="18.5" x2="13.4" y2="26" />
+              <line x1="15" y1="18.5" x2="15" y2="26" />
+              <line x1="17" y1="18.5" x2="16.6" y2="26" />
+              {/* Frosting: mushroom dome wider than the wrapper rim */}
+              <path d="M 7 18
+                       Q 5.5 13, 10.5 12
+                       Q 11.5 8.5, 15 8.5
+                       Q 18.5 8.5, 19.5 12
+                       Q 24.5 13, 23 18 Z"
+                    fill="var(--accent-soft)" />
+              {/* Candle */}
+              <line x1="15" y1="4.5" x2="15" y2="9" strokeWidth="1.6" />
+              {/* Teardrop flame */}
+              <path d="M 15 1.2 C 12.7 3, 12.7 4.3, 15 4.5 C 17.3 4.3, 17.3 3, 15 1.2 Z"
+                    fill="currentColor" stroke="none" />
+            </svg>
             <h2>{p.name}</h2>
           </div>
           <div className="card-modal__nav">

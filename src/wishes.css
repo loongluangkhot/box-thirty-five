@@ -168,30 +168,11 @@
 .stage--wishes .m-candles .flame { width:8px; height:8px; transform:rotate(45deg); background:var(--accent); }
 .stage--wishes .m-candles .stick { width:5px; background:var(--accent-dim); opacity:.6; border-radius:1px; }
 
-.stage--wishes .m-balloons { position:relative; width:56px; height:62px; }
-.stage--wishes .m-balloons .bl {
-  position:absolute; width:24px; height:29px;
-  border:1.5px solid var(--accent); background:var(--accent-soft);
-  border-radius:50% 50% 49% 49% / 56% 56% 44% 44%;
+.stage--wishes .m-balloons {
+  display:flex; align-items:center; justify-content:center;
+  color:var(--accent);
 }
-.stage--wishes .m-balloons .bl::after {
-  content:""; position:absolute; left:50%; bottom:-4px; transform:translateX(-50%);
-  border-left:3px solid transparent; border-right:3px solid transparent;
-  border-top:5px solid var(--accent);
-}
-.stage--wishes .m-balloons .bl--a { top:0; left:2px; }
-.stage--wishes .m-balloons .bl--b { top:9px; left:27px; width:21px; height:26px; opacity:.85; }
-.stage--wishes .m-balloons .str {
-  position:absolute; width:1.5px; background:var(--accent-dim); opacity:.55;
-  border-radius:1px; bottom:0; left:50%; transform-origin:bottom center;
-}
-.stage--wishes .m-balloons .str--a { height:30px; transform:translateX(-50%) rotate(-26deg); }
-.stage--wishes .m-balloons .str--b { height:23px; transform:translateX(-50%) rotate(24deg); }
-.stage--wishes .m-balloons::after {
-  content:""; position:absolute; bottom:-1px; left:50%;
-  transform:translateX(-50%) rotate(45deg);
-  width:4px; height:4px; background:var(--accent-dim);
-}
+.stage--wishes .m-balloons svg { display:block; }
 
 .stage--wishes .m-spark { position:relative; width:52px; height:52px; }
 .stage--wishes .m-spark i { position:absolute; left:50%; top:50%; width:2px; height:46px; background:var(--accent); border-radius:1px; opacity:.85; }
@@ -235,7 +216,7 @@
   color:var(--accent);
 }
 .stage--wishes .canvas__body {
-  display:flex; flex-direction:column; gap:34px;
+  display:flex; flex-direction:column; gap:20px;
   max-width:560px; margin:0 auto;
 }
 .stage--wishes .canvas__foot {
@@ -309,23 +290,9 @@
 .stage--wishes .card-modal__nav .iconbtn:hover { color:var(--accent); border-color:var(--accent); }
 
 /* little cake glyph before the name */
-.stage--wishes .namecake { position:relative; width:30px; height:30px; flex:none; }
-.stage--wishes .namecake__base {
-  position:absolute; bottom:1px; left:1px; width:26px; height:15px;
-  border:1.6px solid var(--accent); border-radius:3px 3px 5px 5px;
-  background:var(--accent-soft);
-}
-.stage--wishes .namecake__base::before {
-  content:""; position:absolute; top:4px; left:-1px; right:-1px; height:4px;
-  border-top:1.6px solid var(--accent); border-radius:60% 60% 0 0 / 100% 100% 0 0;
-}
-.stage--wishes .namecake__candle {
-  position:absolute; bottom:15px; left:50%; transform:translateX(-50%);
-  width:2px; height:7px; background:var(--accent);
-}
-.stage--wishes .namecake__flame {
-  position:absolute; bottom:22px; left:50%; transform:translateX(-50%) rotate(45deg);
-  width:5px; height:5px; background:var(--accent);
+.stage--wishes .namecake {
+  width:30px; height:30px; flex:none; display:block;
+  color:var(--accent);
 }
 
 /* placeholder surfaces */
