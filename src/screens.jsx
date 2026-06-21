@@ -466,6 +466,9 @@ export function FinaleScene({ ctx }) {
             <p>Felix is taken away laughing, then weeping, then quiet. The vault is untouched — and still the question gnaws. You ask the one man who knows. <strong>Dr. Nicholas Neo</strong> answers without hesitation: <span className="speak">"Gold, he must have thought. Bonds."</span> Then, simply: <span className="speak">"More precious than that. They are things I owned that cannot be replaced. Open the vault and see for yourself!"</span></p>
           </div>
           <div className="row mt-l">
+            <button className="btn btn--solid" onClick={() => ctx.go("wishes")}>Open the vault →</button>
+          </div>
+          <div className="row mt">
             <span className="stamp"><span className="d"></span><Kicker>Case 077 · Closed</Kicker></span>
           </div>
           <div className="row mt">

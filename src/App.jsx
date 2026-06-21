@@ -9,11 +9,12 @@ import {
   IntroScreen, HubScreen, LocationScreen, CardsScreen,
   StakeoutScreen, OutcomeScreen, VaultScene, FinaleScene, capId,
 } from "./screens.jsx";
+import { WishesScene } from "./wishes.jsx";
 
 const SAVE_KEY = "box35-save-v3";
 
 const VALID_SCREENS = new Set([
-  "intro", "hub", "cards", "stakeout", "outcome", "vault", "finale",
+  "intro", "hub", "cards", "stakeout", "outcome", "vault", "finale", "wishes",
   ...LOCATIONS.map((l) => l.id),
 ]);
 const screenFromHash = () => {
@@ -198,14 +199,17 @@ export default function App() {
   else if (s === "outcome") Screen = <OutcomeScreen ctx={ctx} />;
   else if (s === "vault") Screen = <VaultScene ctx={ctx} />;
   else if (s === "finale") Screen = <FinaleScene ctx={ctx} />;
+  else if (s === "wishes") Screen = <WishesScene ctx={ctx} />;
   else Screen = <LocationScreen ctx={ctx} />;
 
   const showHud = s !== "intro";
+  const inWishes = s === "wishes";
 
   return (
-    <div className="stage">
+    <div className={`stage${inWishes ? " stage--wishes" : ""}`}>
       {showHud && (
         <HUD day={state.day} sound={state.sound}
+          hideDay={inWishes}
           onSound={() => setState((st) => ({ ...st, sound: !st.sound }))}
           onTitle={() => go("intro")}
           onRestart={() => { if (confirm("Restart the case from the beginning?")) restart(); }} />

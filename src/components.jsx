@@ -20,7 +20,7 @@ export function RichText({ html, className = "prose" }) {
 }
 
 /* ---------------- HUD ---------------- */
-export function HUD({ day, sound, onSound, onRestart, onTitle }) {
+export function HUD({ day, sound, hideDay, onSound, onRestart, onTitle }) {
   return (
     <div className="hud">
       <div className="hud__left">
@@ -28,10 +28,9 @@ export function HUD({ day, sound, onSound, onRestart, onTitle }) {
           <span className="hud__tick"></span>
           <span className="hud__word">Box Thirty&#8209;Five</span>
         </button>
-        <span className="hud__chip">Case 077 · Pre&#8209;Crime</span>
       </div>
       <div className="hud__right">
-        <span className="hud__night"><b>June&nbsp;{day}</b></span>
+        {!hideDay && <span className="hud__night"><b>June&nbsp;{day}</b></span>}
         <button className={`iconbtn${sound ? " iconbtn--on" : ""}`} title="Sound" onClick={onSound}>
           {sound ? "♪" : "○"}
         </button>

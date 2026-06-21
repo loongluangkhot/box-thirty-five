@@ -3,3 +3,9 @@ dist
 .DS_Store
 *.local
 .vite
+
+# Personal vault media — copy to server at deploy time instead.
+public/wishes/
+
+# Handoff bundle from claude.ai/design
+box-thirty-five-handoff.zip
