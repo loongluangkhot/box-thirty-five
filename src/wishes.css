@@ -142,54 +142,11 @@
   letter-spacing:0; line-height:1.05; font-size:20px; text-wrap:balance;
 }
 
-/* ---- cover motifs ---- */
-.stage--wishes .motif-d { width:13px; height:13px; transform:rotate(45deg); background:var(--accent); opacity:.85; }
-.stage--wishes .motif-d--sm { width:8px; height:8px; }
-.stage--wishes .m-garland { display:flex; gap:11px; align-items:center; }
-.stage--wishes .m-garland .motif-d { box-shadow:0 8px 0 -5px rgba(207,60,26,0.35); }
-.stage--wishes .m-emblem { position:relative; width:54px; height:54px; display:flex; align-items:center; justify-content:center; }
-.stage--wishes .m-emblem::before { content:""; position:absolute; inset:0; border:1px solid var(--accent-dim); transform:rotate(45deg); opacity:.5; }
-.stage--wishes .m-numeral { font-family:"Cinzel",var(--font-display); font-weight:700; font-size:42px; color:var(--accent); letter-spacing:2px; line-height:1; }
-.stage--wishes .m-rings { position:relative; width:50px; height:50px; }
-.stage--wishes .m-rings span { position:absolute; inset:0; border:1.5px solid var(--accent); border-radius:50%; opacity:.85; }
-.stage--wishes .m-rings span:nth-child(2){ inset:9px; opacity:.6; }
-.stage--wishes .m-rings span:nth-child(3){ inset:19px; opacity:.4; }
-.stage--wishes .m-confetti { position:relative; width:60px; height:54px; }
-.stage--wishes .m-confetti i { position:absolute; width:7px; height:7px; transform:rotate(45deg); background:var(--accent); opacity:.8; }
-.stage--wishes .m-confetti i:nth-child(1){ top:2px; left:6px; opacity:.55; }
-.stage--wishes .m-confetti i:nth-child(2){ top:0; left:30px; }
-.stage--wishes .m-confetti i:nth-child(3){ top:18px; left:48px; border-radius:50%; opacity:.5; }
-.stage--wishes .m-confetti i:nth-child(4){ top:30px; left:2px; border-radius:50%; }
-.stage--wishes .m-confetti i:nth-child(5){ top:38px; left:26px; opacity:.65; }
-.stage--wishes .m-confetti i:nth-child(6){ top:22px; left:22px; opacity:.4; }
-
-.stage--wishes .m-candles { display:flex; gap:9px; align-items:flex-end; height:56px; }
-.stage--wishes .m-candles .cd { display:flex; flex-direction:column; align-items:center; gap:5px; }
-.stage--wishes .m-candles .flame { width:8px; height:8px; transform:rotate(45deg); background:var(--accent); }
-.stage--wishes .m-candles .stick { width:5px; background:var(--accent-dim); opacity:.6; border-radius:1px; }
-
-.stage--wishes .m-balloons {
-  display:flex; align-items:center; justify-content:center;
-  color:var(--accent);
+/* ---- cover motif: face cutout ---- */
+.stage--wishes .m-face {
+  width:100px; height:100px; object-fit:contain; display:block;
 }
-.stage--wishes .m-balloons svg { display:block; }
-
-.stage--wishes .m-spark { position:relative; width:52px; height:52px; }
-.stage--wishes .m-spark i { position:absolute; left:50%; top:50%; width:2px; height:46px; background:var(--accent); border-radius:1px; opacity:.85; }
-.stage--wishes .m-spark .m-spark__dot { width:9px; height:9px; transform:translate(-50%,-50%) rotate(45deg); background:var(--accent); opacity:1; }
-
-.stage--wishes .m-gift { position:relative; width:50px; height:52px; }
-.stage--wishes .m-gift .box { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:44px; height:34px; border:1.5px solid var(--accent); }
-.stage--wishes .m-gift .rib { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:6px; height:34px; background:var(--accent); opacity:.7; }
-.stage--wishes .m-gift .bow { position:absolute; top:0; left:50%; transform:translate(-50%,0) rotate(45deg); width:13px; height:13px; border:1.5px solid var(--accent); background:var(--card-a); }
-
-.stage--wishes .m-quatre { position:relative; width:50px; height:50px; }
-.stage--wishes .m-quatre i { position:absolute; width:15px; height:15px; transform:rotate(45deg); border:1.5px solid var(--accent); }
-.stage--wishes .m-quatre i:nth-child(1){ top:0; left:17px; }
-.stage--wishes .m-quatre i:nth-child(2){ bottom:0; left:17px; }
-.stage--wishes .m-quatre i:nth-child(3){ left:0; top:17px; }
-.stage--wishes .m-quatre i:nth-child(4){ right:0; top:17px; }
-.stage--wishes .m-quatre .m-quatre__dot { width:9px; height:9px; top:20px; left:20px; border:0; background:var(--accent); }
+.stage--wishes .canvas__head .m-face { width:100px; height:100px; }
 
 /* ============================================================
    OPEN CARD — modal canvas

@@ -27,82 +27,12 @@ const PUNS = [
   "A fine year for it",
 ];
 
-/* one of ten simple cover motifs, chosen by slot */
+/* Face cutouts in /public/faces/ — one per slot. The list skips
+   nic6 (file doesn't exist) but is otherwise just nic0..nic10. */
+const FACES = ["nic", "nic1", "nic2", "nic3", "nic4", "nic5", "nic7", "nic8", "nic9", "nic10"];
 function Motif({ v }) {
-  switch (v) {
-    case 0:
-      return (
-        <span className="m-garland">
-          {Array.from({ length: 5 }).map((_, i) => <i key={i} className="motif-d motif-d--sm"></i>)}
-        </span>
-      );
-    case 1:
-      return <span className="m-emblem"><i className="motif-d"></i></span>;
-    case 2:
-      return <span className="m-numeral">35</span>;
-    case 3:
-      return <span className="m-rings"><span></span><span></span><span></span></span>;
-    case 4:
-      return <span className="m-confetti">{Array.from({ length: 6 }).map((_, i) => <i key={i}></i>)}</span>;
-    case 5:
-      return (
-        <span className="m-candles">
-          {[30, 40, 30].map((h, i) => (
-            <span className="cd" key={i}>
-              <i className="flame"></i>
-              <i className="stick" style={{ height: h }}></i>
-            </span>
-          ))}
-        </span>
-      );
-    case 6:
-      return (
-        <span className="m-balloons">
-          <svg viewBox="0 0 60 64" width="56" height="60" fill="none"
-               stroke="currentColor" strokeWidth="1.4"
-               strokeLinecap="round" strokeLinejoin="round">
-            {/* Back balloon (smaller, behind) */}
-            <ellipse cx="38" cy="22" rx="9" ry="11.5" fill="var(--accent-soft)" />
-            <path d="M35.7 33 L38 35.2 L40.3 33 Z" fill="currentColor" stroke="none" />
-            <path d="M38 35.2 C 38 40, 33 44, 30 50" />
-            {/* Front balloon (larger, in front) */}
-            <ellipse cx="20" cy="19" rx="10.5" ry="13" fill="var(--accent-soft)" />
-            <path d="M17.5 31 L20 33.5 L22.5 31 Z" fill="currentColor" stroke="none" />
-            <path d="M20 33.5 C 20 39, 26 44, 30 50" />
-            {/* Highlight on the front balloon */}
-            <path d="M14.5 13 Q 13 17, 14 22" strokeWidth="1" opacity=".6" />
-            {/* Tie point where the two strings meet */}
-            <circle cx="30" cy="50" r="1.6" fill="currentColor" stroke="none" />
-            {/* Short tail past the tie */}
-            <path d="M30 50 L 29.5 54" />
-          </svg>
-        </span>
-      );
-    case 7:
-      return (
-        <span className="m-spark">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <i key={i} style={{ transform: "translate(-50%,-50%) rotate(" + (i * 30) + "deg)" }}></i>
-          ))}
-          <i className="m-spark__dot"></i>
-        </span>
-      );
-    case 8:
-      return (
-        <span className="m-gift">
-          <i className="box"></i>
-          <i className="rib"></i>
-          <i className="bow"></i>
-        </span>
-      );
-    default:
-      return (
-        <span className="m-quatre">
-          <i></i><i></i><i></i><i></i>
-          <i className="m-quatre__dot"></i>
-        </span>
-      );
-  }
+  const name = FACES[((v % FACES.length) + FACES.length) % FACES.length];
+  return <img className="m-face" src={`/faces/${name}.png`} alt="" />;
 }
 
 function CardFront({ p, idx, onOpen }) {

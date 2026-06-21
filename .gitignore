@@ -6,6 +6,7 @@ dist
 
 # Personal vault media — copy to server at deploy time instead.
 public/wishes/
+public/faces/
 
 # Handoff bundle from claude.ai/design
 box-thirty-five-handoff.zip
